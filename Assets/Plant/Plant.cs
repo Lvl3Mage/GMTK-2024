@@ -16,7 +16,7 @@ public class Plant : MonoBehaviour
 		}
 	}
 
-	public void Grows()
+	public void Grow()
 	{
 		HashSet<Vector2Int> growthTargets = new HashSet<Vector2Int>();
 		foreach (Vector2Int plantPosition in plantPositions){
