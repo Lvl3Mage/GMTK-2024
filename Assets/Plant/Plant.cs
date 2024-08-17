@@ -7,15 +7,6 @@ using UnityEngine;
 
 public class Plant : MonoBehaviour
 {
-	
-	public class WorldGrid
-	{
-		public static WorldGrid instance;
-		public Plant? GetPlantAt(Vector2Int position)
-		{
-			throw new System.NotImplementedException();
-		}
-	}
 	readonly HashSet<Vector2Int> growthPositions = new HashSet<Vector2Int>();
 	readonly HashSet<Vector2Int> plantPositions = new HashSet<Vector2Int>();
 	public void Create(Vector2Int[] positions, Vector2Int root)
