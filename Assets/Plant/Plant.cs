@@ -7,13 +7,20 @@ using UnityEngine;
 
 public class Plant : MonoBehaviour
 {
+	[SerializeField] PlantRenderer plantRendererPrefab;
+	[SerializeField] PlantRenderer plantRenderer;
 	readonly HashSet<Vector2Int> growthPositions = new HashSet<Vector2Int>();
 	readonly HashSet<Vector2Int> plantPositions = new HashSet<Vector2Int>();
 	public void Create(Vector2Int[] positions, Vector2Int root)
 	{
+		if(plantRenderer == null)
+		{
+			plantRenderer = Instantiate(plantRendererPrefab, Vector3.zero, Quaternion.identity);
+		}
 		foreach (Vector2Int position in positions){
 			growthPositions.Add(position);
 		}
+		plantRenderer.AddCell(root);
 	}
 
 	public void Grow()
@@ -28,6 +35,7 @@ public class Plant : MonoBehaviour
 		foreach (Vector2Int growthTarget in growthTargets){
 			AddPlantPosition(growthTarget);
 		}
+		plantRenderer.AddCells(growthTargets.ToArray());
 	}
 	void AddPlantPosition(Vector2Int position)
 	{
@@ -59,6 +67,7 @@ public class Plant : MonoBehaviour
 	public event PlantDeletionHandler OnDestroyed;
 	public void DestroyPlant()
 	{
+		plantRenderer.DestroyCells();
 		OnDestroyed?.Invoke(this);
 		Destroy(gameObject);
 		foreach (Vector2Int plantPosition in plantPositions){
