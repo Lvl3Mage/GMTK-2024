@@ -6,7 +6,7 @@ using UnityEngine;
 
 public class WorldGrid : MonoBehaviour
 {
-    private Dictionary<Vector2Int, WorldGrid.Plant> plantLookUp = new Dictionary<Vector2Int, WorldGrid.Plant>();
+    private Dictionary<Vector2Int, Plant> plantLookUp = new Dictionary<Vector2Int, Plant>();
     private Dictionary<Vector2Int, int> growthLookUp = new Dictionary<Vector2Int, int>();
     private Dictionary<Vector2Int, MapCellType> mapLookUp = new Dictionary<Vector2Int, MapCellType>();
 
@@ -90,20 +90,18 @@ public class WorldGrid : MonoBehaviour
 
     public MapCellType GetMapTypeAt(Vector2Int position)
     {
-        mapLookUp.TryGetValue(position, out MapCellType mapCellType);
-        return mapCellType;
+        if(mapLookUp.ContainsKey(position))
+        {
+            return mapLookUp[position];
+        }
+        else { return MapCellType.Land; }
     }
 
-
-    public class Plant
-    {
-        public int id;
-    }
 }
 
 
 public enum MapCellType
 {
-    Water,
-    Land
+    Land,
+    Water
 }
