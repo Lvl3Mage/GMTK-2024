@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class PlantCellRenderer : MonoBehaviour
 {
+    [SerializeField] Renderer tileRenderer;
     [SerializeField] Animator animator;
     public int GetSubTileIndex(bool[] edges)
     {
@@ -33,7 +35,8 @@ public class PlantCellRenderer : MonoBehaviour
     public void SetTileData(bool[] edges)
     {
         int[] indices = GetTileIndecies(edges);
-
+        Vector4 indexData = new Vector4(indices[0], indices[1], indices[2], indices[3]);
+        tileRenderer.material.SetVector("_TileIndex", indexData);
         //Update shaders
     }
 

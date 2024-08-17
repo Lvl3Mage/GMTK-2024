@@ -11,11 +11,15 @@ public class PlantRenderer : MonoBehaviour
     Dictionary<Vector2Int, PlantCellRenderer> childRenderers = new(); //All 'child' bush cells the whole plant has
     [SerializeField] PlantCellRenderer cellRendererPrefab;
 
+    public void AddCell(Vector2Int cell)
+    {
+        AddCells(new Vector2Int[] { cell });
+    }
     /// <summary>
     /// Recieves the cells of a single plant and renders them as tiles. 
     /// </summary>
     /// <param name="cells">Each of the cell coordinates that the plant has. </param>
-    public void Add(Vector2Int[] cells)
+    public void AddCells(Vector2Int[] cells)
     {
         HashSet<Vector2Int> updatedCells = new(cells);
 
@@ -64,7 +68,7 @@ public class PlantRenderer : MonoBehaviour
     /// Iterates over the renderers of all childs/cells and calls Destroy() on each of them. 
     /// </summary>
     /// <param name="animate">Determines if an animation will be played when destroyed. </param>
-    public void Destroy(bool animate = true)
+    public void DestroyCells(bool animate = true)
     {
         foreach (KeyValuePair<Vector2Int, PlantCellRenderer> pair in childRenderers)
         {
