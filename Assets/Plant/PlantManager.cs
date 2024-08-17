@@ -4,7 +4,7 @@ using UnityEngine;
 public class PlantManager : MonoBehaviour
 {
     private List<Plant> plants = new List<Plant>();
-    [SerializeField] Plant plantPrefap;
+    [SerializeField] Plant plantPrefab;
 
     public void CreatePlant(Vector2Int[] positions, Vector2Int rootPosition)
     {
@@ -36,7 +36,7 @@ public class PlantManager : MonoBehaviour
     private Plant InstantiatePlantAt(Vector2Int position)
     {
         GameObject plantObject = new GameObject("Plant");
-        Plant plant = Instantiate(plantPrefapl);
+        Plant plant = Instantiate(plantPrefab);
 
         plant.transform.position = new Vector2(position.x, position.y);
         return plant;
