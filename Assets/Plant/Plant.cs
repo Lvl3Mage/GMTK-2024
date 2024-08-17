@@ -15,7 +15,21 @@ public class Plant : MonoBehaviour
 			growthPositions.Add(position);
 		}
 	}
-	public void AddPlantPosition(Vector2Int position)
+
+	public void Grow()
+	{
+		HashSet<Vector2Int> growthTargets = new HashSet<Vector2Int>();
+		foreach (Vector2Int plantPosition in plantPositions){
+			Vector2Int[] cellNeighbours = CellUtils.GetCellNeighbours(plantPosition);
+			growthTargets.AddRange(cellNeighbours);
+		}
+		growthTargets.ExceptWith(plantPositions);
+		growthTargets.IntersectWith(growthPositions);
+		foreach (Vector2Int growthTarget in growthTargets){
+			AddPlantPosition(growthTarget);
+		}
+	}
+	void AddPlantPosition(Vector2Int position)
 	{
 		plantPositions.Add(position);
 		Plant[] neighbours = GetPlantNeighbours(position);
@@ -41,7 +55,8 @@ public class Plant : MonoBehaviour
 	{
 		dependencies.Remove(plant);
 	}
-	public event Action<Plant> OnDestroyed;
+	public delegate void PlantDeletionHandler(Plant plant);
+	public event PlantDeletionHandler OnDestroyed;
 	public void DestroyPlant()
 	{
 		OnDestroyed?.Invoke(this);
