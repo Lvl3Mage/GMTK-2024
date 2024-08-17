@@ -30,11 +30,13 @@ public class WorldGrid : MonoBehaviour
         instance = this;
     }
 
+    // ------ Metodos de plantLookUp ------
+
     public void RegisterPlant(Vector2Int position, Plant plant)
     {
         if(plantLookUp.ContainsKey(position))
         {
-            Debug.LogWarning($"plant look up {position}");
+            Debug.LogWarning($"existing plant in {position}");
         }
         plantLookUp.Add(position, plant);
     }
@@ -44,6 +46,10 @@ public class WorldGrid : MonoBehaviour
         if(plantLookUp.ContainsKey(position))
         {
             plantLookUp.Remove(position);
+        }
+        else
+        {
+            Debug.LogWarning("Trying to erase a non-existent plant");
         }
     }
 
@@ -56,6 +62,7 @@ public class WorldGrid : MonoBehaviour
         else { return null; }
     }
 
+
     public bool GetGrowthAt(Vector2Int position)
     {
         if(plantLookUp.ContainsKey(position))
@@ -63,6 +70,8 @@ public class WorldGrid : MonoBehaviour
         return true;
         
     }
+
+    // ------ Metodos de growthLookUp ------
 
     public void AddGrowthPositions(Vector2Int[] positions)
     {   
@@ -87,6 +96,8 @@ public class WorldGrid : MonoBehaviour
             }
         }
     }
+
+    // ------ Metodos de mapLookUp ------
 
     public MapCellType GetMapTypeAt(Vector2Int position)
     {
