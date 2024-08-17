@@ -37,7 +37,7 @@ public class WorldGrid : MonoBehaviour
         plantLookUp.Add(position, plant);
     }
 
-    public void RemovePlant(Vector2Int position)
+    public void RemovePlantAt(Vector2Int position)
     {
         if(plantLookUp.ContainsKey(position))
         {

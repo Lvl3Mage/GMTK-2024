@@ -46,8 +46,10 @@ public class Plant : MonoBehaviour
 	{
 		OnDestroyed?.Invoke(this);
 		Destroy(gameObject);
-		//Todo remove from world grid
-		//Todo remove from growth positions in world grid
+		foreach (Vector2Int plantPosition in plantPositions){
+			WorldGrid.instance.RemovePlantAt(plantPosition);
+		}
+		WorldGrid.instance.RemoveGrowthPositions(growthPositions.ToArray());
 	}
 	
 }
