@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -41,16 +42,9 @@ public class Plant : MonoBehaviour
 	}
 	Plant[] GetPlantNeighbours(Vector2Int position)
 	{
-		List<Plant> neighbours = new List<Plant>();
 		Vector2Int[] cellNeighbours = CellUtils.GetCellNeighbours(position);
-		foreach (Vector2Int neighbour in cellNeighbours){
-			Plant? plant = WorldGrid.instance.GetPlantAt(neighbour);
-			if (plant != null){
-				neighbours.Add(plant);
-			}
-		}
 
-		return neighbours.ToArray();
+		return cellNeighbours.Select(neighbour => WorldGrid.instance.GetPlantAt(neighbour)).OfType<Plant>().ToArray();
 	}
 	void RemoveDependency(Plant plant)
 	{
