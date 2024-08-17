@@ -1,20 +1,12 @@
 ﻿#nullable enable
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
 
 public class Plant : MonoBehaviour
 {
-	
-	public class WorldGrid
-	{
-		public static WorldGrid instance;
-		public Plant? GetPlantAt(Vector2Int position)
-		{
-			throw new System.NotImplementedException();
-		}
-	}
 	readonly HashSet<Vector2Int> growthPositions = new HashSet<Vector2Int>();
 	readonly HashSet<Vector2Int> plantPositions = new HashSet<Vector2Int>();
 	public void Create(Vector2Int[] positions, Vector2Int root)
@@ -41,16 +33,9 @@ public class Plant : MonoBehaviour
 	}
 	Plant[] GetPlantNeighbours(Vector2Int position)
 	{
-		List<Plant> neighbours = new List<Plant>();
 		Vector2Int[] cellNeighbours = CellUtils.GetCellNeighbours(position);
-		foreach (Vector2Int neighbour in cellNeighbours){
-			Plant? plant = WorldGrid.instance.GetPlantAt(neighbour);
-			if (plant != null){
-				neighbours.Add(plant);
-			}
-		}
 
-		return neighbours.ToArray();
+		return cellNeighbours.Select(neighbour => WorldGrid.instance.GetPlantAt(neighbour)).OfType<Plant>().ToArray();
 	}
 	void RemoveDependency(Plant plant)
 	{
@@ -61,8 +46,10 @@ public class Plant : MonoBehaviour
 	{
 		OnDestroyed?.Invoke(this);
 		Destroy(gameObject);
-		//Todo remove from world grid
-		//Todo remove from growth positions in world grid
+		foreach (Vector2Int plantPosition in plantPositions){
+			WorldGrid.instance.RemovePlantAt(plantPosition);
+		}
+		WorldGrid.instance.RemoveGrowthPositions(growthPositions.ToArray());
 	}
 	
 }
