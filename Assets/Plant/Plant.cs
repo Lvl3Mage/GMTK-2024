@@ -15,7 +15,7 @@ public class Plant : MonoBehaviour
 			growthPositions.Add(position);
 		}
 	}
-	void AddPlantPosition(Vector2Int position)
+	public void AddPlantPosition(Vector2Int position)
 	{
 		plantPositions.Add(position);
 		Plant[] neighbours = GetPlantNeighbours(position);
