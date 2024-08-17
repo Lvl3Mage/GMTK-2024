@@ -32,10 +32,11 @@ public class WorldGrid : MonoBehaviour
 
     public void RegisterPlant(Vector2Int position, Plant plant)
     {
-        if(!plantLookUp.ContainsKey(position))
+        if(plantLookUp.ContainsKey(position))
         {
-            plantLookUp.Add(position, plant);
+            Debug.LogWarning($"plant look up {position}");
         }
+        plantLookUp.Add(position, plant);
     }
 
     public void RemovePlant(Vector2Int position)
