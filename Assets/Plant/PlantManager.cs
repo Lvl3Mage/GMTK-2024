@@ -11,10 +11,10 @@ public class PlantManager : MonoBehaviour
         Plant newPlant = InstantiatePlantAt(rootPosition);
         newPlant.Create(positions, rootPosition);
 
-        foreach (var position in positions)
-        {
-            newPlant.AddPlantPosition(position);
-        }
+        //foreach (var position in positions)
+        //{
+        //    newPlant.AddPlantPosition(position);
+        //}
         plants.Add(newPlant);
         newPlant.OnDestroyed += RemovePlant;
     }
