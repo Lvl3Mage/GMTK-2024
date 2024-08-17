@@ -3,9 +3,16 @@ using UnityEngine;
 
 public class PlantManager : MonoBehaviour
 {
+    
     private List<Plant> plants = new List<Plant>();
     [SerializeField] Plant plantPrefab;
 
+
+    /// <summary>
+    /// Create a new Plant with all its functions.
+    /// </summary>
+    /// <param name="positions">the coordinates where it will be created</param>
+    /// <param name="rootPosition">the coordinates of the first Plant</param>
     public void CreatePlant(Vector2Int[] positions, Vector2Int rootPosition)
     {
         Plant newPlant = InstantiatePlantAt(rootPosition);
