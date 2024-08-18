@@ -129,30 +129,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1444810799913484735, guid: 529a18db1b74627459799826b121f372, type: 3}
-      propertyPath: looping
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1444810799913484735, guid: 529a18db1b74627459799826b121f372, type: 3}
-      propertyPath: ShapeModule.type
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 1444810799913484735, guid: 529a18db1b74627459799826b121f372, type: 3}
-      propertyPath: ShapeModule.m_Rotation.z
-      value: 180
-      objectReference: {fileID: 0}
-    - target: {fileID: 1444810799913484735, guid: 529a18db1b74627459799826b121f372, type: 3}
-      propertyPath: ShapeModule.radius.value
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 1444810799913484735, guid: 529a18db1b74627459799826b121f372, type: 3}
-      propertyPath: EmissionModule.m_BurstCount
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1444810799913484735, guid: 529a18db1b74627459799826b121f372, type: 3}
-      propertyPath: EmissionModule.m_Bursts.Array.size
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 3424180504925880611, guid: 529a18db1b74627459799826b121f372, type: 3}
       propertyPath: m_Name
       value: ParticleRain
@@ -171,7 +147,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5304341718896700051, guid: 529a18db1b74627459799826b121f372, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.975801
+      value: -1.01
       objectReference: {fileID: 0}
     - target: {fileID: 5304341718896700051, guid: 529a18db1b74627459799826b121f372, type: 3}
       propertyPath: m_LocalRotation.w
