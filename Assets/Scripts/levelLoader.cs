@@ -6,18 +6,27 @@ using UnityEngine.SceneManagement;
 public class levelLoader : MonoBehaviour
 {
     public Animator transition;
-    //private void Update()
-    //{
-    //    Debug.Log(transform.position);
 
-    //    if (Input.GetMouseButtonDown(0))
-    //    {
-    //    }
-    //}
+    private void Update()
+    {
+        if (SceneManager.GetActiveScene().name == "Credits")
+        {
+            if (Input.anyKeyDown)
+            {
+                transition.SetTrigger("main");
+                //LoadMainMenu();
+            }
+        }
+    }
 
     public void callForChangeScene()
     {
         transition.SetTrigger("start");
+    }
+
+    public void callForChangeCredits()
+    {
+        transition.SetTrigger("credits");
     }
 
     public void LoadNextLevel()
@@ -25,4 +34,13 @@ public class levelLoader : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
+    public void LoadCredits()
+    {
+        SceneManager.LoadScene("Credits");
+    }
+
+    public void LoadMainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
+    }
 }
