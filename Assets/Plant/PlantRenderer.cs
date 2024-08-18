@@ -8,16 +8,22 @@ using UnityEngine.Rendering.Universal;
 
 public class PlantRenderer : MonoBehaviour
 {
-    Dictionary<Vector2Int, PlantCellRenderer> childRenderers = new(); //All 'child' cells the whole plant currently has
     [SerializeField] PlantCellRenderer cellRendererPrefab;
+    [SerializeField] float shakeDuration = 0.8f;
+    public bool doAnimations = true;
+    Dictionary<Vector2Int, PlantCellRenderer> childRenderers = new(); //All 'child' cells the whole plant currently has
+    List<Vector2Int> pendingUpdates; //Cells that are yet to be re-rendered
+
+
+    /// <summary>Returns an array with all children cell renderers the whole plant has. </summary>
+    public PlantCellRenderer[] GetCellArray() => childRenderers.Values.ToArray();
 
     public void AddCell(Vector2Int cell)
     {
         AddCells(new Vector2Int[] { cell });
     }
-    /// <summary>
-    /// Recieves the cells of a single plant and renders them as tiles. 
-    /// </summary>
+
+    /// <summary>Recieves the cells of a single plant and renders them as tiles. </summary>
     /// <param name="cells">Each of the cell coordinates that the plant has. </param>
     public void AddCells(Vector2Int[] cells)
     {
@@ -32,14 +38,16 @@ public class PlantRenderer : MonoBehaviour
             updatedCells.Add(cell); //Add itself
             childRenderers.Add(cell, Instantiate(cellRendererPrefab, (Vector2)cell, Quaternion.identity));
         }
+        pendingUpdates = updatedCells.ToList<Vector2Int>();
 
-        UpdateSprites(updatedCells.ToList<Vector2Int>()); //Modify all cell tiles that need to be changed
+        if (doAnimations) StartBushShaking(); //It will call UpdateCells after waiting
+        else UpdateCells();
     }
 
-    void UpdateSprites(List<Vector2Int> cells)
+    /// <summary>Changes all pendingUpdates cells at once with a proper animation. </summary>
+    public void UpdateCells()
     {
-        // Changes the sprites of a given coordinate (cell) list, according to the state of WorldGrid. 
-        foreach (Vector2Int cell in cells)
+        foreach (Vector2Int cell in pendingUpdates)
         {
             //Update each cell
             PlantCellRenderer cellRenderer;
@@ -57,22 +65,36 @@ public class PlantRenderer : MonoBehaviour
                 }
 
                 cellRenderer.SetTileEdges(neighbouredEdges);
-                cellRenderer.TriggerAnimation();
+                if (doAnimations) cellRenderer.TriggerShiftAnimation(); //It will call UpdateSprite after animation
+                else cellRenderer.UpdateSprite();
             }
             else Debug.LogWarning("Trying to render an unexisting cell. ");
         }
     }
     
-    /// <summary>
-    /// Iterates over the renderers of all childs/cells and calls Destroy() on each of them. Then, it destroys itself. 
-    /// </summary>
+    /// <summary>Iterates over the renderers of all childs/cells and calls Destroy() on each of them. Then, it destroys itself. </summary>
     /// <param name="animate">Determines if an animation will be played when destroyed. </param>
-    public void DestroyAll(bool animate = true)
+    public void DestroyAll()
     {
-        foreach (KeyValuePair<Vector2Int, PlantCellRenderer> pair in childRenderers)
+        foreach (PlantCellRenderer cellRenderer in GetCellArray())
         {
-            pair.Value.DestroyCell(animate); //Each child manages its own animation
+            if (doAnimations) cellRenderer.PlayDestroyAnimation();
+            else cellRenderer.Delete();
         }
         Destroy(gameObject);
+    }
+
+    private void StartBushShaking()
+    {
+        foreach (PlantCellRenderer cellRenderer in GetCellArray())
+            cellRenderer.PlayShakeAnimation();
+        
+        StartCoroutine(TimedCellUpdate(shakeDuration)); //Wait some seconds and then update pending
+    }
+
+    private IEnumerator TimedCellUpdate(float secondsDelay)
+    {
+        yield return new WaitForSeconds(secondsDelay);
+        UpdateCells();
     }
 }
