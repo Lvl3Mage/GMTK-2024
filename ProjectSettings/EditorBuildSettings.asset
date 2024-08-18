@@ -6,9 +6,12 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/Alonso Scene.unity
+    path: Assets/Scenes/MainMenu.unity
     guid: 46fb0c00520560743ae218afecf58562
   - enabled: 1
     path: Assets/Scenes/Test_Scene.unity
     guid: 5aa8e210754b98f4698d8c74d75a123b
+  - enabled: 1
+    path: Assets/Scenes/Credits.unity
+    guid: 7af5ca8939f008247bee1002872545c3
   m_configObjects: {}
