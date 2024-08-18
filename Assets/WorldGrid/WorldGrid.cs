@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,27 +7,54 @@ using UnityEngine;
 
 public class WorldGrid : MonoBehaviour
 {
-    private readonly Dictionary<Vector2Int, Plant> plantLookUp = new Dictionary<Vector2Int, Plant>();
-    private readonly Dictionary<Vector2Int, int> growthLookUp = new Dictionary<Vector2Int, int>();
-    private readonly Dictionary<Vector2Int, MapCellType> mapLookup = new Dictionary<Vector2Int, MapCellType>();
+    readonly Dictionary<Vector2Int, Plant> plantLookUp = new();
+    readonly Dictionary<Vector2Int, int> growthLookUp = new();
+    readonly Dictionary<Vector2Int, MapCellType> mapLookup = new();
 
-    // Como sabemos que solo habra un solo WorldGrid en una escena, hacemos esto para no tener que buscarlo por "tag"
+    void OnDrawGizmos()
+    {
+        foreach (var plant in plantLookUp)
+        {
+            Gizmos.color = Color.yellow;
+            Gizmos.DrawWireSphere((Vector2)plant.Key, 0.3f);
+        }
+        
+        foreach(var addedCell in addedCells)
+        {
+            Gizmos.color = Color.gray;
+            Gizmos.DrawWireSphere((Vector2)addedCell, 0.1f);
+        }
+    }
+
+    /// <summary>
+    /// Tracks the cells that have been added from the grid since the ClearPlantChanges call
+    /// </summary>
+    readonly HashSet<Vector2Int> addedCells = new();
+    
+    /// <summary>
+    /// Tracks the cells that have been removed from the grid since the ClearPlantChanges call
+    /// </summary>
+    readonly HashSet<Vector2Int> removedCells = new();
+    
+    /// <summary>
+    /// WorldGrid Singleton instance
+    /// </summary>
     public static WorldGrid instance { get; private set; }
 
-    
-    private void Awake()
+    /// <summary>
+    /// Initializes the WorldGrid Singleton
+    /// </summary>
+    void Awake()
     {
         if (instance != null)
         {
-            Debug.LogWarning("Another instance of WorldGrid exists!"); // si existiese otro WorldGrid se autodestruiria
+            Debug.LogWarning("Another instance of WorldGrid exists! Destroying this one ."); // si existiese otro WorldGrid se autodestruiria
             Destroy(gameObject);
             return;
         }
 
         instance = this;
     }
-
-    // ------ Metodos de plantLookUp ------
 
     public void RegisterPlant(Vector2Int position, Plant plant)
     {
@@ -35,6 +63,8 @@ public class WorldGrid : MonoBehaviour
         }
 
         plantLookUp.Add(position, plant);
+        removedCells.Remove(position);
+        addedCells.Add(position);
     }
 
     public void RemovePlantAt(Vector2Int position)
@@ -42,6 +72,8 @@ public class WorldGrid : MonoBehaviour
         if(plantLookUp.ContainsKey(position))
         {
             plantLookUp.Remove(position);
+            addedCells.Remove(position);
+            removedCells.Add(position);
         }
         else
         {
@@ -59,13 +91,27 @@ public class WorldGrid : MonoBehaviour
         return null;
     }
 
+    public HashSet<Vector2Int> GetPlantAdditions()
+    {
+        return new HashSet<Vector2Int>(addedCells);
+    }
+    public HashSet<Vector2Int> GetPlantRemovals()
+    {
+        return new HashSet<Vector2Int>(removedCells);
+    }
+    public void ClearPlantChanges()
+    {
+        addedCells.Clear();
+        removedCells.Clear();
+    }
+
 
     public bool GetGrowthAt(Vector2Int position)
     {
         return !plantLookUp.ContainsKey(position);
     }
 
-    // ------ Metodos de growthLookUp ------
+    // Growth Lookup
 
     public void AddGrowthPositions(Vector2Int[] positions)
     {   
@@ -91,7 +137,8 @@ public class WorldGrid : MonoBehaviour
         }
     }
 
-    // ------ Metodos de mapLookUp ------
+    
+    //Map Lookup
 
     public MapCellType GetMapTypeAt(Vector2Int position)
     {

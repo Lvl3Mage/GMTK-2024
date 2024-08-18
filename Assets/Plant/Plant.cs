@@ -7,20 +7,16 @@ using UnityEngine;
 
 public class Plant : MonoBehaviour
 {
-	[SerializeField] PlantRenderer plantRendererPrefab;
-	[SerializeField] PlantRenderer plantRenderer;
-	readonly HashSet<Vector2Int> growthPositions = new HashSet<Vector2Int>();
-	readonly HashSet<Vector2Int> plantPositions = new HashSet<Vector2Int>();
+	[SerializeField] Color plantColor;
+	public Color PlantColor => plantColor;
+	readonly HashSet<Vector2Int> growthPositions = new();
+	readonly HashSet<Vector2Int> plantPositions = new();
 	public void Create(Vector2Int[] positions, Vector2Int root)
 	{
-		if(plantRenderer == null)
-		{
-			plantRenderer = Instantiate(plantRendererPrefab, Vector3.zero, Quaternion.identity);
-		}
 		foreach (Vector2Int position in positions){
 			growthPositions.Add(position);
 		}
-		plantRenderer.FillCell(root);
+		AddPlantPosition(root);
 	}
 
 	public void Grow()
@@ -35,10 +31,10 @@ public class Plant : MonoBehaviour
 		foreach (Vector2Int growthTarget in growthTargets){
 			AddPlantPosition(growthTarget);
 		}
-		plantRenderer.FillCells(growthTargets.ToArray());
 	}
 	void AddPlantPosition(Vector2Int position)
 	{
+		WorldGrid.instance.RegisterPlant(position, this);
 		plantPositions.Add(position);
 		Plant[] neighbours = GetPlantNeighbours(position);
 		foreach (Plant neighbour in neighbours){
@@ -67,7 +63,6 @@ public class Plant : MonoBehaviour
 	public event PlantDeletionHandler OnDestroyed;
 	public void DestroyPlant()
 	{
-		plantRenderer.DestroyAll();
 		OnDestroyed?.Invoke(this);
 		Destroy(gameObject);
 		foreach (Vector2Int plantPosition in plantPositions){

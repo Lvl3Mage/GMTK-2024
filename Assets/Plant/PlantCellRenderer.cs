@@ -1,35 +1,88 @@
+using System;
+using System.Collections;
+using Lvl3Mage.EditorEnhancements.Runtime;
+using Lvl3Mage.InterpolationToolkit.Splines;
 using UnityEngine;
+using UnityEngine.Serialization;
+using UnityEngine.U2D;
 
 public class PlantCellRenderer : MonoBehaviour
 {
     [SerializeField] Renderer tileRenderer;
     [SerializeField] Animator animator;
-    bool[] currentVertices = new bool[4];
-    Color[] currentColors = new Color[4];
+    int pastTileIndex = 0;
+    [SerializeField] int tileIndex = 0;
+    Color[] quadrantColors = new Color[4];
+    bool[] testQuadrantData = new bool[4];
+    [SerializeField] VibrationSplineCreator shakeSpline;
+    [SerializeField] float shakeDuration = 1f;
+    
+    
+    
 
-    /// <summary>Modifies the whole cell edges. Each PlantRenderer makes its childs call it. </summary>
-    /// <param name="neighbouredVertices">An array that reprents the edges that are on collision with other cells</param>
-    /// <param name="vertexColors"></param>
-    public void SetData(bool[] neighbouredVertices, Color[] vertexColors)
+    void OnDrawGizmos()
     {
-        currentColors = vertexColors;
-        currentVertices = neighbouredVertices;
+        Vector2Int[] quadrants = CellUtils.CellQuadrantOffsets();
+        for (int i = 0; i < quadrants.Length; i++){
+            Gizmos.color = testQuadrantData[i] ? Color.red : Color.green;
+            Gizmos.DrawWireCube(quadrants[i] - Vector2.one*0.5f + (Vector2)transform.position, Vector3.one*0.5f);
+        }
     }
 
-    public void PlaySpawnAnimation() => animator.Play("Spawn");
-    
-    public void PlayUpdateAnimation() => animator.Play("Update");
-    
-    /// <summary>Plays a destroying animation and then deletes the instance of the cell renderer. </summary>
-    public void PlayDestroyAnimation() => animator.Play("Destroy"); //Delete will be called on animation end
+    /// <summary>Modifies the whole cell edges. Each PlantRenderer makes its childs call it. </summary>
+    /// <param name="quadrantData">An array that reprents the edges that are on collision with other cells</param>
+    /// <param name="newQuadrantColors"></param>
+    public void SetData(bool[] quadrantData, Color[] newQuadrantColors)
+    {
+        testQuadrantData = quadrantData;
+        pastTileIndex = tileIndex;
+        tileIndex = GetTileIndex(quadrantData);
+        
+        quadrantColors = newQuadrantColors;
+    }
 
+    public void AnimateSpriteChange()
+    {
+        if (pastTileIndex == tileIndex){
+            Debug.LogWarning("No change in tile index. Skipping animation", this);
+            return;
+        }
+        if (pastTileIndex == 0){
+            animator.Play("Spawn");
+        }
+        else if (tileIndex == 0){
+            animator.Play("Destroy"); 
+        }
+        else{
+            animator.Play("Update");
+        }
+    }
     /// <summary>Plays the "Shake" animation in the animator. </summary>
-    public void PlayShakeAnimation() => animator.Play("Shake");
+    public void AnimateShake()
+    {
+        StartCoroutine(Shake(shakeDuration));
+        //animator.Play("Shake");
+    }
+    IEnumerator Shake(float duration)
+    {
+        Vector2 originalPosition = transform.position;
+        ISpline xSpline = shakeSpline.CreateSpline(-1, 1);
+        ISpline ySpline = shakeSpline.CreateSpline(-1, 1);
+        float time = 0;
+        while (time < duration){
+            float t = time/duration;
+            Vector2 position = originalPosition + new Vector2(xSpline.Evaluate(t), ySpline.Evaluate(t));
+            transform.position = position;
+            time += Time.deltaTime;
+            yield return null;
+        }
+        transform.position = originalPosition;
+    }
 
     /// <summary>Destroys the gameObjectInstance. </summary>
     public void Delete() => Destroy(gameObject);
     /// <summary>Updates the rendered sprite so that it matches stored edge data. (Called by Animator on precise frames). </summary>
-    int GetTileIndex(bool[] tileData)
+    static int GetTileIndex(bool[] tileData)
     {
         int index = 0;
         for (int i = tileData.Length-1; i >= 0; i--){
@@ -42,25 +95,11 @@ public class PlantCellRenderer : MonoBehaviour
     }
     public void UpdateSprite()
     {
-        int index = GetTileIndex(currentVertices);
-        tileRenderer.material.SetFloat("_TileIndex", index);
-        tileRenderer.material.SetColor("_TintBottomLeft", currentColors[0]);
-        tileRenderer.material.SetColor("_TintBottomRight", currentColors[1]);
-        tileRenderer.material.SetColor("_TintTopLeft", currentColors[2]);
-        tileRenderer.material.SetColor("_TintTopRight", currentColors[3]);
+        tileRenderer.material.SetFloat("_TileIndex", tileIndex);
+        tileRenderer.material.SetColor("_TintBottomLeft", quadrantColors[0]);
+        tileRenderer.material.SetColor("_TintBottomRight", quadrantColors[1]);
+        tileRenderer.material.SetColor("_TintTopLeft", quadrantColors[2]);
+        tileRenderer.material.SetColor("_TintTopRight", quadrantColors[3]);
         
-    }
-
-    void OnDrawGizmos()
-    {
-        Vector2Int position = new Vector2Int((int)transform.position.x, (int)transform.position.y);
-        Vector2Int[] neighbours = CellUtils.GetCellQuadrant(position);
-        
-        for (int i = 0; i < neighbours.Length; i++)
-        {
-            Vector2Int neighbour = neighbours[i];
-            Gizmos.color = currentVertices[i] ? Color.green : Color.red;
-            Gizmos.DrawWireSphere((Vector2)neighbour, currentVertices[i] ? 0.5f : 0.25f);
-        }
     }
 }

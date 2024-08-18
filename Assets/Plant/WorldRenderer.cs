@@ -11,94 +11,144 @@ public class WorldRenderer : MonoBehaviour
     {
         if (instance != null)
         {
-            Debug.LogWarning("Another instance of WorldRenderer exists!"); // si existiese otro WorldRenderer se autodestruiria
+            Debug.LogWarning("Another instance of WorldRenderer exists!");
             Destroy(gameObject);
             return;
         }
 
         instance = this;
     }
-    Dictionary<Vector2Int, PlantCellRenderer> renderers = new();
-    HashSet<Vector2Int> filledCells = new();
+    
     [SerializeField] PlantCellRenderer plantCellRendererPrefab;
+    
+    
+    Dictionary<Vector2Int, PlantCellRenderer> rendererGrid = new();
+    HashSet<Vector2Int> filledCells = new();
+    HashSet<Vector2Int> pendingRendererUpdates = new();
     Dictionary<Vector2Int,Color> filledCellColors = new();
-    public void FillCells(Vector2Int[] positionsToFill, Color color)
+
+    void GenerateRenderGrid(HashSet<Vector2Int> generationPositions)
     {
-        filledCells.UnionWith(positionsToFill);
-        foreach (Vector2Int pos in positionsToFill){
-            filledCellColors[pos] = color;
-        }
-        HashSet<Vector2Int> affectedRendererPositions = new(positionsToFill);
-        foreach (Vector2Int positionToFill in positionsToFill){
-            Vector2Int[] neighbours = CellUtils.GetCellNeighbours(positionToFill);
-            affectedRendererPositions.UnionWith(neighbours);
-        }
-        HashSet<Vector2Int> spawnPositions = new(affectedRendererPositions.Except(renderers.Keys));
-        
+        HashSet<Vector2Int> spawnPositions = new(generationPositions);
+        spawnPositions.ExceptWith(rendererGrid.Keys);
         SpawnRenderers(spawnPositions.ToArray());
-        RefreshRenderers(affectedRendererPositions);
         
     }
     void SpawnRenderers(Vector2Int[] positions)
     {
         foreach (Vector2Int position in positions){
-            PlantCellRenderer plantCellRenderer = Instantiate(plantCellRendererPrefab, new Vector3(position.x, position.y, 0), Quaternion.identity);
-            renderers.Add(position, plantCellRenderer);
+            Vector2 worldPosition = GetWorldTilePosition(position);
+            PlantCellRenderer plantCellRenderer = Instantiate(plantCellRendererPrefab, worldPosition, Quaternion.identity);
+            rendererGrid.Add(position, plantCellRenderer);
         }
     }
-    void RefreshRenderers(HashSet<Vector2Int> affectedRenderers)
+    public Vector2 GetWorldTilePosition(Vector2Int position)
     {
-        foreach (Vector2Int affectedRenderer in affectedRenderers){
-            
-            if(!renderers.ContainsKey(affectedRenderer))
-            {
-                Debug.LogWarning("Trying to refresh a non-existent renderer");
-                continue;
+        return new Vector2(position.x, position.y) + Vector2.one * 0.5f;
+    }
+    public class FillGroup
+    {
+        public FillGroup(HashSet<Vector2Int> positions, Color color)
+        {
+            this.positions = positions;
+            this.color = color;
+        }
+        public HashSet<Vector2Int> positions = new();
+        public Color color;
+    }
+    public void AddFilledCells(FillGroup[] fillGroups)
+    {
+        foreach (FillGroup fillGroup in fillGroups){
+            AddFilledCells(fillGroup.positions, fillGroup.color);
+        }
+    }
+    public void AddFilledCells(HashSet<Vector2Int> positionsToFill, Color color)
+    {
+        filledCells.UnionWith(positionsToFill);
+        foreach (Vector2Int pos in positionsToFill){
+            filledCellColors[pos] = color;
+        }
+        PropagateFillChanges(positionsToFill);
+        
+    }
+    public void RemoveFilledCells(HashSet<Vector2Int> positionsToRemove)
+    {
+        filledCells.ExceptWith(positionsToRemove);
+        foreach (Vector2Int pos in positionsToRemove){
+            filledCellColors.Remove(pos);
+        }
+        PropagateFillChanges(positionsToRemove);
+    }
+    
+    void PropagateFillChanges(HashSet<Vector2Int> fillPositions)
+    { 
+        HashSet<Vector2Int> affectedRendererPositions = new(fillPositions);
+        foreach (Vector2Int updatedPosition in fillPositions){
+            Vector2Int[] neighbours = CellUtils.GetCellQuadrant(updatedPosition - Vector2Int.one);
+            foreach (Vector2Int neighbour in neighbours){
+                Debug.Log($"Adding neighbour {neighbour}");
             }
-            PlantCellRenderer plantCellRenderer = renderers[affectedRenderer];
+            affectedRendererPositions.UnionWith(neighbours);
+        }
+        RefreshRendererData(affectedRendererPositions);
+        
+        pendingRendererUpdates.UnionWith(affectedRendererPositions);
+    }
+    void RefreshRendererData(HashSet<Vector2Int> affectedRenderers)
+    {
+        GenerateRenderGrid(affectedRenderers);
+        foreach (Vector2Int affectedRenderer in affectedRenderers){
+            PlantCellRenderer plantCellRenderer = rendererGrid[affectedRenderer];
             
-            bool[] surroundingFill = new bool[4];
-            Vector2Int[] surroundingPositions = CellUtils.GetCellQuadrant(affectedRenderer);
-            for (int i = 0; i < surroundingPositions.Length; i++){
-                surroundingFill[i] = filledCells.Contains(surroundingPositions[i]);
+            bool[] quadrantFillData = new bool[4];
+            Vector2Int[] quadrantPositions = CellUtils.GetCellQuadrant(affectedRenderer);
+            
+            for (int i = 0; i < quadrantPositions.Length; i++){
+                quadrantFillData[i] = filledCells.Contains(quadrantPositions[i]);
             }
 
-            int filledColorsCount = 0;
-            Color averageColor = new Color(0,0,0);
-            for (int i = 0; i < surroundingPositions.Length; i++){
-                if (filledCellColors.ContainsKey(surroundingPositions[i])){
-                    averageColor += filledCellColors[surroundingPositions[i]];
-                    filledColorsCount++;
-                }
-            }
-            averageColor /= filledColorsCount;
-            Color[] filledColors = new Color[4];
-            for (int i = 0; i < filledColors.Length; i++){
-                if(filledCellColors.ContainsKey(surroundingPositions[i])){
-                    filledColors[i] = filledCellColors[surroundingPositions[i]];
+            Color averageColor = GetAverageColor(quadrantPositions);
+            Color[] quadrantColors = new Color[4];
+            for (int i = 0; i < quadrantColors.Length; i++){
+                if(filledCellColors.ContainsKey(quadrantPositions[i])){
+                    quadrantColors[i] = filledCellColors[quadrantPositions[i]];
                 }
                 else
                 {
-                    filledColors[i] = averageColor;
+                    quadrantColors[i] = averageColor;
                 }
             }
             
-            
-            plantCellRenderer.Refresh(surroundingFill, filledColors);
-            
-            
+            plantCellRenderer.SetData(quadrantFillData, quadrantColors);
         }
     }
-    
-    // Start is called before the first frame update
-    void Start()
+    Color GetAverageColor(Vector2Int[] positions)
     {
-        
+        Color averageColor = new Color(0,0,0);
+        int filledColorsCount = 0;
+        for (int i = 0; i < positions.Length; i++){
+            if (!filledCellColors.ContainsKey(positions[i])) continue;
+            
+            
+            averageColor += filledCellColors[positions[i]];
+            filledColorsCount++;
+        }
+        averageColor /= filledColorsCount;
+        return averageColor;
     }
-
-    // Update is called once per frame
-    void Update()
+    
+    //Animation
+    public void InitiateShake()
     {
-        
+        foreach (Vector2Int pendingRendererUpdate in pendingRendererUpdates){
+            rendererGrid[pendingRendererUpdate].AnimateShake();
+        }
+    }
+    public void InitiateSpriteChange()
+    {
+        foreach (Vector2Int pendingRendererUpdate in pendingRendererUpdates){
+            rendererGrid[pendingRendererUpdate].AnimateSpriteChange();
+        }
+        pendingRendererUpdates.Clear();
     }
 }
