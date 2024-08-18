@@ -1424,8 +1424,8 @@ ParticleSystem:
     serializedVersion: 2
     enabled: 1
     mode: 1
-    timeMode: 0
-    fps: 30
+    timeMode: 2
+    fps: 1
     frameOverTime:
       serializedVersion: 2
       minMaxState: 1
@@ -1481,8 +1481,8 @@ ParticleSystem:
         m_RotationOrder: 4
     startFrame:
       serializedVersion: 2
-      minMaxState: 0
-      scalar: 0
+      minMaxState: 3
+      scalar: 0.95454544
       minScalar: 0
       maxCurve:
         serializedVersion: 2
