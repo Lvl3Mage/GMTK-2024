@@ -20,7 +20,7 @@ public class Plant : MonoBehaviour
 		foreach (Vector2Int position in positions){
 			growthPositions.Add(position);
 		}
-		plantRenderer.AddCell(root);
+		plantRenderer.FillCell(root);
 	}
 
 	public void Grow()
@@ -35,7 +35,7 @@ public class Plant : MonoBehaviour
 		foreach (Vector2Int growthTarget in growthTargets){
 			AddPlantPosition(growthTarget);
 		}
-		plantRenderer.AddCells(growthTargets.ToArray());
+		plantRenderer.FillCells(growthTargets.ToArray());
 	}
 	void AddPlantPosition(Vector2Int position)
 	{
