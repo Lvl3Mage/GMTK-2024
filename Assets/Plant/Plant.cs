@@ -67,7 +67,7 @@ public class Plant : MonoBehaviour
 	public event PlantDeletionHandler OnDestroyed;
 	public void DestroyPlant()
 	{
-		plantRenderer.DestroyCells();
+		plantRenderer.DestroyAll();
 		OnDestroyed?.Invoke(this);
 		Destroy(gameObject);
 		foreach (Vector2Int plantPosition in plantPositions){
