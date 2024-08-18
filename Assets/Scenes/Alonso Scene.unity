@@ -805,6 +805,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1444810799913484735, guid: b6766efb1449da244810ec8811a5e12a, type: 3}
+      propertyPath: ExternalForcesModule.multiplierCurve.scalar
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 3424180504925880611, guid: b6766efb1449da244810ec8811a5e12a, type: 3}
       propertyPath: m_Name
       value: Particle System
@@ -867,12 +871,16 @@ PrefabInstance:
       value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 1674501909, guid: be3129a6464ae6640b9587a927b6baf1, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -10543
+      objectReference: {fileID: 0}
+    - target: {fileID: 1674501909, guid: be3129a6464ae6640b9587a927b6baf1, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1674501909, guid: be3129a6464ae6640b9587a927b6baf1, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -7
       objectReference: {fileID: 0}
     - target: {fileID: 1674501910, guid: be3129a6464ae6640b9587a927b6baf1, type: 3}
       propertyPath: m_Parameters.m_Shape
@@ -896,7 +904,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1674501910, guid: be3129a6464ae6640b9587a927b6baf1, type: 3}
       propertyPath: m_Parameters.m_GravityCurve.scalar
-      value: 1
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 1674501910, guid: be3129a6464ae6640b9587a927b6baf1, type: 3}
       propertyPath: m_Parameters.m_RotationRandomness.x
@@ -904,7 +912,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1674501910, guid: be3129a6464ae6640b9587a927b6baf1, type: 3}
       propertyPath: m_Parameters.m_DirectionCurveX.scalar
-      value: 0
+      value: -1
       objectReference: {fileID: 0}
     - target: {fileID: 1674501910, guid: be3129a6464ae6640b9587a927b6baf1, type: 3}
       propertyPath: m_Parameters.m_RotationSpeedCurve.scalar
@@ -912,7 +920,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1674501910, guid: be3129a6464ae6640b9587a927b6baf1, type: 3}
       propertyPath: m_Parameters.m_VectorFieldSpeedCurve.scalar
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4020061599950958464, guid: be3129a6464ae6640b9587a927b6baf1, type: 3}
       propertyPath: m_Pivot.x
