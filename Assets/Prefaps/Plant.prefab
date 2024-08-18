@@ -44,4 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c5a6450688945fc9af99e7f13a52843, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  plantColor: {r: 0, g: 0.25067383, b: 0.016423743, a: 1}
+  plantColor: {r: 0.6886792, g: 0.6886792, b: 0.6886792, a: 1}

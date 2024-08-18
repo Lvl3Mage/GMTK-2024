@@ -46,12 +46,17 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _MaskBorderWidth: 0.11
+    - _MaskNoiseFrequency: 20
+    - _MaskNoiseMagnitude: 0.03
+    - _MaskSize: 1
+    - _NoiseMultiplier: 1
     - _QueueControl: 0
     - _QueueOffset: 0
-    - _ShapeWarpFrequency: 2
+    - _ShapeWarpFrequency: 2.19
     - _ShapeWarpMagnitude: 0.1
     - _ShapeWarpSpeed: 0.15
-    - _TileIndex: 6.22
+    - _TileIndex: 5.32
     - _VertexTintMagnitude: 0.2
     - _VertexTintPosterizeSteps: 1.61
     m_Colors:
