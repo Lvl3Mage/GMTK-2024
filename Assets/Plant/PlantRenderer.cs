@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using Lvl3Mage.CameraManagement2D;
+using Lvl3Mage.EditorEnhancements.Runtime;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
@@ -9,37 +12,73 @@ using UnityEngine.Rendering.Universal;
 public class PlantRenderer : MonoBehaviour
 {
     Dictionary<Vector2Int, PlantCellRenderer> childRenderers = new(); //All 'child' bush cells the whole plant has
+    HashSet<Vector2Int> filledCells = new();
     [SerializeField] PlantCellRenderer cellRendererPrefab;
+    [ParentActionButton("TEST",nameof(Test), hideField:true)]
+    [SerializeField] string plantName;
+    [SerializeField] Vector2Int[] addCells;
 
-    public void AddCell(Vector2Int cell)
+    void Test()
     {
-        AddCells(new Vector2Int[] { cell });
+        FillCells(addCells);
+    }
+
+    void Update()
+    {
+        if (Input.GetMouseButton(0)){
+            Vector2 mousePosition = SceneCamera.GetWorldMousePosition();
+            Vector2Int cell = new Vector2Int((int)Mathf.Round(mousePosition.x), (int)Mathf.Round(mousePosition.y));
+            if (!filledCells.Contains(cell)){
+                FillCell(cell);
+            }
+
+        }
+    }
+
+    public void FillCell(Vector2Int cell)
+    {
+        FillCells(new Vector2Int[] { cell });
     }
     /// <summary>
     /// Recieves the cells of a single plant and renders them as tiles. 
     /// </summary>
     /// <param name="cells">Each of the cell coordinates that the plant has. </param>
-    public void AddCells(Vector2Int[] cells)
+    public void FillCells(Vector2Int[] cells)
     {
-        HashSet<Vector2Int> updatedCells = new(cells);
+        filledCells.UnionWith(cells);
+        HashSet<Vector2Int> cellsToAdd = new(cells);
+        
+        // foreach (Vector2Int cell in cells)
+        // {
+        //     Vector2Int[] neighbours = CellUtils.GetCellNeighbours(cell);
+        //     cellsToAdd.AddRange<Vector2Int>(neighbours);
+        // }
+        HashSet<Vector2Int> existingCells = new(childRenderers.Keys);
+        cellsToAdd.ExceptWith(existingCells);
+        
+        
+        foreach (Vector2Int newRenderingCell in cellsToAdd){
+            PlantCellRenderer cellRenderer = Instantiate(cellRendererPrefab, (Vector2)newRenderingCell, Quaternion.identity);
+            childRenderers.Add(newRenderingCell, cellRenderer);
+        }
+        
+        
+        HashSet<Vector2Int> updatedCells = new(cellsToAdd);
 
-        foreach (Vector2Int cell in cells)
+        foreach (Vector2Int cell in cellsToAdd)
         {
             Vector2Int[] neighbours = CellUtils.GetCellNeighbours(cell);
-
-            updatedCells.AddRange<Vector2Int>(neighbours);
-            updatedCells.Add(cell);
-            childRenderers.Add(cell, Instantiate(cellRendererPrefab, (Vector2)cell, Quaternion.identity));
+            updatedCells.AddRange(neighbours);
         }
 
-        UpdateSprites(updatedCells.ToList<Vector2Int>());
+        UpdateSprites(updatedCells.ToArray());
     }
 
     /// <summary>
     /// Changes the sprites of a given coordinate list, according to the state of WorldGrid. 
     /// </summary>
     /// <param name="cells">Each of the cell coordinates that will be updated. </param>
-    public void UpdateSprites(List<Vector2Int> cells)
+    public void UpdateSprites(Vector2Int[] cells)
     {
         foreach (Vector2Int cell in cells)
         {
@@ -55,12 +94,12 @@ public class PlantRenderer : MonoBehaviour
                 
                 for (int i = 0; i < tileData.Length; i++)
                 {
-                    neighbouredEdges[i] = WorldGrid.instance.GetPlantAt(tileData[i]) != null;
+                    neighbouredEdges[i] = filledCells.Contains(tileData[i]);
                 }
 
                 cellRenderer.SetTileData(neighbouredEdges);
             }
-            else Debug.LogWarning("Trying to render an unexisting cell. ");
+            else Debug.LogWarning("Trying to render a non-existing cell. ");
         }
     }
     
