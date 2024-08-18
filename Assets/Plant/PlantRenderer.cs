@@ -1,28 +1,22 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using Lvl3Mage.CameraManagement2D;
-using Lvl3Mage.EditorEnhancements.Runtime;
 using Unity.VisualScripting;
 using UnityEngine;
-using Random = UnityEngine.Random;
+using UnityEngine.Rendering.Universal;
 
 public class PlantRenderer : MonoBehaviour
 {
-    Dictionary<Vector2Int, PlantCellRenderer> childRenderers = new(); //All 'child' bush cells the whole plant has
-    HashSet<Vector2Int> filledCells = new();
     [SerializeField] PlantCellRenderer cellRendererPrefab;
-    [ParentActionButton("Change Color",nameof(Test), hideField:true)]
+    [ParentActionButton("TEST",nameof(Test), hideField:true)]
     [SerializeField] string plantName;
     [SerializeField] Vector2Int[] addCells;
-    [SerializeField] Color color;
-    Color originalColor;
+
     void Test()
     {
-        originalColor = color;
-        color = originalColor;
-        color.r += Random.Range(-0.1f,0.1f);
-        color.g += Random.Range(-0.1f,0.1f);
-        color.b += Random.Range(-0.1f,0.1f);
+        FillCells(addCells);
     }
 
     void Update()
@@ -31,90 +25,87 @@ public class PlantRenderer : MonoBehaviour
             Vector2 mousePosition = SceneCamera.GetWorldMousePosition();
             Vector2Int cell = new Vector2Int((int)Mathf.Round(mousePosition.x), (int)Mathf.Round(mousePosition.y));
             if (!filledCells.Contains(cell)){
-                filledCells.Add(cell);
-                WorldRenderer.instance.FillCells(new Vector2Int[]{cell},color);
+                FillCell(cell);
             }
 
-        }
+    /// <summary>Returns an array with all children cell renderers the whole plant has. </summary>
+    public PlantCellRenderer[] GetCellArray() => childRenderers.Values.ToArray();
+
+    public void AddCell(Vector2Int cell)
+    {
+        AddCells(new Vector2Int[] { cell });
     }
 
-    public void FillCell(Vector2Int cell)
-    {
-        FillCells(new Vector2Int[] { cell });
-    }
-    /// <summary>
-    /// Recieves the cells of a single plant and renders them as tiles. 
-    /// </summary>
+    /// <summary>Recieves the cells of a single plant and renders them as tiles. </summary>
     /// <param name="cells">Each of the cell coordinates that the plant has. </param>
-    public void FillCells(Vector2Int[] cells)
+    public void AddCells(Vector2Int[] cells)
     {
-        filledCells.UnionWith(cells);
-        HashSet<Vector2Int> cellsToAdd = new(cells);
-        
-        // foreach (Vector2Int cell in cells)
-        // {
-        //     Vector2Int[] neighbours = CellUtils.GetCellNeighbours(cell);
-        //     cellsToAdd.AddRange<Vector2Int>(neighbours);
-        // }
-        HashSet<Vector2Int> existingCells = new(childRenderers.Keys);
-        cellsToAdd.ExceptWith(existingCells);
-        
-        
-        foreach (Vector2Int newRenderingCell in cellsToAdd){
-            PlantCellRenderer cellRenderer = Instantiate(cellRendererPrefab, (Vector2)newRenderingCell, Quaternion.identity);
-            childRenderers.Add(newRenderingCell, cellRenderer);
-        }
-        
-        
-        HashSet<Vector2Int> updatedCells = new(cellsToAdd);
+        //updatedCells will store the cells where bushes will be added + cells that will change due to those bushes
+        HashSet<Vector2Int> updatedCells = new(cells);
 
-        foreach (Vector2Int cell in cellsToAdd)
+        foreach (Vector2Int cell in cells)
         {
             Vector2Int[] neighbours = CellUtils.GetCellNeighbours(cell);
-            updatedCells.AddRange(neighbours);
-        }
 
-        UpdateSprites(updatedCells.ToArray());
+            updatedCells.AddRange<Vector2Int>(neighbours); //Add neighbours
+            updatedCells.Add(cell); //Add itself
+            childRenderers.Add(cell, Instantiate(cellRendererPrefab, (Vector2)cell, Quaternion.identity));
+        }
+        pendingUpdates = updatedCells.ToList<Vector2Int>();
+
+        if (doAnimations) StartBushShaking(); //It will call UpdateCells after waiting
+        else UpdateCells();
     }
 
-    /// <summary>
-    /// Changes the sprites of a given coordinate list, according to the state of WorldGrid. 
-    /// </summary>
-    /// <param name="cells">Each of the cell coordinates that will be updated. </param>
-    public void UpdateSprites(Vector2Int[] cells)
+    /// <summary>Changes all pendingUpdates cells at once with a proper animation. </summary>
+    public void UpdateCells()
     {
-        foreach (Vector2Int cell in cells)
+        foreach (Vector2Int cell in pendingUpdates)
         {
             //Update each cell
             PlantCellRenderer cellRenderer;
 
-            if (childRenderers.ContainsKey(cell))
+            if (childRenderers.ContainsKey(cell)) //Guaranteed to happen
             {
                 cellRenderer = childRenderers[cell];
-                
                 Vector2Int[] tileData = CellUtils.GetCellNeighbours(cell, true);
-                bool[] neighbouredEdges = new bool[tileData.Length];
+                bool[] neighbouredEdges = new bool[tileData.Length]; //tileData.Length is always 9
                 
                 for (int i = 0; i < tileData.Length; i++)
                 {
-                    neighbouredEdges[i] = filledCells.Contains(tileData[i]);
+                    //WorldGrid.instance.GetPlantAt(tileData[i]) != null; (use to make cells combine even if they come from different plants)
+                    neighbouredEdges[i] = childRenderers.ContainsKey(tileData[i]); //cells only take into account other cells from their plant
                 }
 
-                // cellRenderer.SetTileData(neighbouredEdges);
+                cellRenderer.SetTileData(neighbouredEdges);
             }
-            else Debug.LogWarning("Trying to render a non-existing cell. ");
+            else Debug.LogWarning("Trying to render an unexisting cell. ");
         }
     }
     
-    /// <summary>
-    /// Iterates over the renderers of all childs/cells and calls Destroy() on each of them. 
-    /// </summary>
+    /// <summary>Iterates over the renderers of all childs/cells and calls Destroy() on each of them. Then, it destroys itself. </summary>
     /// <param name="animate">Determines if an animation will be played when destroyed. </param>
-    public void DestroyCells(bool animate = true)
+    public void DestroyAll()
     {
-        foreach (KeyValuePair<Vector2Int, PlantCellRenderer> pair in childRenderers)
+        foreach (PlantCellRenderer cellRenderer in GetCellArray())
         {
-            pair.Value.Destroy(animate); //Each child manages its own animation
+            if (doAnimations) cellRenderer.PlayDestroyAnimation();
+            else cellRenderer.Delete();
         }
+        Destroy(gameObject);
+    }
+
+    private void StartBushShaking()
+    {
+        foreach (PlantCellRenderer cellRenderer in GetCellArray())
+            cellRenderer.PlayShakeAnimation();
+        
+        StartCoroutine(TimedCellUpdate(shakeDuration)); //Wait some seconds and then update pending
+    }
+
+    private IEnumerator TimedCellUpdate(float secondsDelay)
+    {
+        yield return new WaitForSeconds(secondsDelay);
+        UpdateCells();
     }
 }

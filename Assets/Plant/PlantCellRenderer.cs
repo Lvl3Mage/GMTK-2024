@@ -5,61 +5,50 @@ public class PlantCellRenderer : MonoBehaviour
     [SerializeField] Renderer tileRenderer;
     [SerializeField] Animator animator;
     bool[] currentVertices = new bool[4];
-    int GetTileIndex(bool[] edges)
+    Color[] currentColors = new Color[4];
+
+    /// <summary>Modifies the whole cell edges. Each PlantRenderer makes its childs call it. </summary>
+    /// <param name="neighbouredVertices">An array that reprents the edges that are on collision with other cells</param>
+    /// <param name="vertexColors"></param>
+    public void SetData(bool[] neighbouredVertices, Color[] vertexColors)
+    {
+        currentColors = vertexColors;
+        currentVertices = neighbouredVertices;
+    }
+
+    public void PlaySpawnAnimation() => animator.Play("Spawn");
+    
+    public void PlayUpdateAnimation() => animator.Play("Update");
+    
+    /// <summary>Plays a destroying animation and then deletes the instance of the cell renderer. </summary>
+    public void PlayDestroyAnimation() => animator.Play("Destroy"); //Delete will be called on animation end
+
+    /// <summary>Plays the "Shake" animation in the animator. </summary>
+    public void PlayShakeAnimation() => animator.Play("Shake");
+
+    /// <summary>Destroys the gameObjectInstance. </summary>
+    public void Delete() => Destroy(gameObject);
+    /// <summary>Updates the rendered sprite so that it matches stored edge data. (Called by Animator on precise frames). </summary>
+    int GetTileIndex(bool[] tileData)
     {
         int index = 0;
-        for (int i = edges.Length-1; i >= 0; i--){
+        for (int i = tileData.Length-1; i >= 0; i--){
             index <<= 1;
-            index += edges[i] ? 1 : 0;
+            index += tileData[i] ? 1 : 0;
         }
 
         return index;
-    }
 
-    // int[] GetTileIndices(bool[] edges)
-    // {
-    //     bool[][] subTiles = 
-    //     {
-    //         new[]{edges[0],edges[1],edges[3],edges[4]},
-    //         new[]{edges[1],edges[2],edges[4],edges[5]},
-    //         new[]{edges[3],edges[4],edges[6],edges[7]},
-    //         new[]{edges[4],edges[5],edges[7],edges[8]}
-    //     };
-    //     for (int i = 0; i < 4; i++){
-    //         bool filled = true;
-    //         for (int j = 0; j < 4; j++){
-    //             filled &= subTiles[i][j];
-    //         }
-    //     
-    //         subTiles[i][i] = filled;
-    //     }
-    //     int[] indices = new int[]{
-    //         GetSubTileIndex(subTiles[0]),
-    //         GetSubTileIndex(subTiles[1]),
-    //         GetSubTileIndex(subTiles[2]),
-    //         GetSubTileIndex(subTiles[3]),
-    //     };
-    //
-    //     return indices;
-    // }
-    public void Refresh(bool[] vertices, Color[] vertexColors)
+    }
+    public void UpdateSprite()
     {
-        currentVertices = vertices;
-        int index = GetTileIndex(vertices);
+        int index = GetTileIndex(currentVertices);
         tileRenderer.material.SetFloat("_TileIndex", index);
-        tileRenderer.material.SetColor("_TintBottomLeft", vertexColors[0]);
-        tileRenderer.material.SetColor("_TintBottomRight", vertexColors[1]);
-        tileRenderer.material.SetColor("_TintTopLeft", vertexColors[2]);
-        tileRenderer.material.SetColor("_TintTopRight", vertexColors[3]);
+        tileRenderer.material.SetColor("_TintBottomLeft", currentColors[0]);
+        tileRenderer.material.SetColor("_TintBottomRight", currentColors[1]);
+        tileRenderer.material.SetColor("_TintTopLeft", currentColors[2]);
+        tileRenderer.material.SetColor("_TintTopRight", currentColors[3]);
         
-    }
-
-    public void Destroy(bool animate = true)
-    {
-        if (animate)
-        {
-            //animator
-        }
     }
 
     void OnDrawGizmos()
