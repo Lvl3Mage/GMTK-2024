@@ -6,14 +6,18 @@ using UnityEngine.SceneManagement;
 public class levelLoader : MonoBehaviour
 {
     public Animator transition;
-    private void Update()
-    {
-        Debug.Log(transform.position);
+    //private void Update()
+    //{
+    //    Debug.Log(transform.position);
 
-        if (Input.GetMouseButtonDown(0))
-        {
-            transition.SetTrigger("start");
-        }
+    //    if (Input.GetMouseButtonDown(0))
+    //    {
+    //    }
+    //}
+
+    public void callForChangeScene()
+    {
+        transition.SetTrigger("start");
     }
 
     public void LoadNextLevel()

@@ -137,6 +137,10 @@ PrefabInstance:
       propertyPath: m_SortingOrder
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 4020061599950958467, guid: be3129a6464ae6640b9587a927b6baf1, type: 3}
+      propertyPath: m_Camera
+      value: 
+      objectReference: {fileID: 2011568456}
     - target: {fileID: 7721658220692445698, guid: be3129a6464ae6640b9587a927b6baf1, type: 3}
       propertyPath: m_RootOrder
       value: 1
@@ -349,5 +353,5 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
