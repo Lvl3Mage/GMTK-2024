@@ -1,26 +1,28 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using Lvl3Mage.CameraManagement2D;
 using Lvl3Mage.EditorEnhancements.Runtime;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
+using Random = UnityEngine.Random;
 
 public class PlantRenderer : MonoBehaviour
 {
     Dictionary<Vector2Int, PlantCellRenderer> childRenderers = new(); //All 'child' bush cells the whole plant has
     HashSet<Vector2Int> filledCells = new();
     [SerializeField] PlantCellRenderer cellRendererPrefab;
-    [ParentActionButton("TEST",nameof(Test), hideField:true)]
+    [ParentActionButton("Change Color",nameof(Test), hideField:true)]
     [SerializeField] string plantName;
     [SerializeField] Vector2Int[] addCells;
-
+    [SerializeField] Color color;
+    Color originalColor;
     void Test()
     {
-        FillCells(addCells);
+        originalColor = color;
+        color = originalColor;
+        color.r += Random.Range(-0.1f,0.1f);
+        color.g += Random.Range(-0.1f,0.1f);
+        color.b += Random.Range(-0.1f,0.1f);
     }
 
     void Update()
@@ -29,7 +31,8 @@ public class PlantRenderer : MonoBehaviour
             Vector2 mousePosition = SceneCamera.GetWorldMousePosition();
             Vector2Int cell = new Vector2Int((int)Mathf.Round(mousePosition.x), (int)Mathf.Round(mousePosition.y));
             if (!filledCells.Contains(cell)){
-                FillCell(cell);
+                filledCells.Add(cell);
+                WorldRenderer.instance.FillCells(new Vector2Int[]{cell},color);
             }
 
         }
@@ -97,7 +100,7 @@ public class PlantRenderer : MonoBehaviour
                     neighbouredEdges[i] = filledCells.Contains(tileData[i]);
                 }
 
-                cellRenderer.SetTileData(neighbouredEdges);
+                // cellRenderer.SetTileData(neighbouredEdges);
             }
             else Debug.LogWarning("Trying to render a non-existing cell. ");
         }

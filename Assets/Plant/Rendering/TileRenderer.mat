@@ -20,6 +20,14 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _BaseTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _BorderTexture:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Tiles:
         m_Texture: {fileID: 18700000, guid: bbd2cd09754b98941b430716b8ffcd9a, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -41,7 +49,14 @@ Material:
     - _QueueControl: 0
     - _QueueOffset: 0
     - _TileIndex: -0.66
-    m_Colors: []
+    m_Colors:
+    - _BaseTint: {r: 0, g: 0.20754719, b: 0.011516351, a: 1}
+    - _BorderTint: {r: 0.0048379623, g: 0.18867922, b: 0, a: 1}
+    - _Tint: {r: 1, g: 1, b: 1, a: 1}
+    - _TintBottomLeft: {r: 0.3568478, g: 0, b: 1, a: 0}
+    - _TintBottomRight: {r: 1, g: 0, b: 0.9013662, a: 0}
+    - _TintTopLeft: {r: 1, g: 0, b: 0, a: 0}
+    - _TintTopRight: {r: 0.154232, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []
 --- !u!114 &4370764551724606872
 MonoBehaviour:

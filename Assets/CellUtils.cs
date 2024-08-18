@@ -20,4 +20,13 @@ public static class CellUtils
 
 		return neighbours;
 	}
+	public static Vector2Int[] GetCellQuadrant(Vector2Int cell)
+	{
+		return new Vector2Int[]{
+			cell,
+			cell + Vector2Int.right,
+			cell + Vector2Int.up,
+			cell + Vector2Int.one,
+		};
+	}
 }
