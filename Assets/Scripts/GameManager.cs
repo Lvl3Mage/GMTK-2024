@@ -59,6 +59,9 @@ public class GameManager : MonoBehaviour
     IEnumerator ExpandGrid(Vector2Int amount)
     {
         gridSize += amount;
+        //Todo hook in the grid cell generation here with the new grid size @Alon/@Joao
+        
+        
         Bounds newBounds = WorldGrid.instance.ExpandGridBounds(amount);
         cameraPanModule.SetClamp(cameraGridController.GetCameraClamp(newBounds));
         cameraModuleManager.SwitchToController(1);

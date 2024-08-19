@@ -59,19 +59,19 @@ public class PlantManager : MonoBehaviour
             }
             plantGroups[plant].Add(addition);
         }
-        WorldRenderer.FillGroup[] fillGroups = new WorldRenderer.FillGroup[plantGroups.Count];
+        PlantRenderer.FillGroup[] fillGroups = new PlantRenderer.FillGroup[plantGroups.Count];
         int i = 0;
         foreach (KeyValuePair<Plant, HashSet<Vector2Int>> plantGroup in plantGroups){
-            fillGroups[i] = new WorldRenderer.FillGroup(plantGroup.Value, plantGroup.Key.PlantColor);
+            fillGroups[i] = new PlantRenderer.FillGroup(plantGroup.Value, plantGroup.Key.PlantColor);
             i++;
         }
-        WorldRenderer.instance.RemoveFilledCells(plantRemovals);
-        WorldRenderer.instance.AddFilledCells(fillGroups);
+        PlantRenderer.instance.RemoveFilledCells(plantRemovals);
+        PlantRenderer.instance.AddFilledCells(fillGroups);
         
-        WorldRenderer.instance.InitiateShake();
+        PlantRenderer.instance.InitiateShake();
         yield return new WaitForSeconds(plantShakeTime);
         
-        WorldRenderer.instance.InitiateSpriteChange();
+        PlantRenderer.instance.InitiateSpriteChange();
         yield return new WaitForSeconds(plantAnimationTime);
         
     }

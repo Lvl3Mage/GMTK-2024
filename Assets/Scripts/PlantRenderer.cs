@@ -6,9 +6,9 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
-public class WorldRenderer : MonoBehaviour
+public class PlantRenderer : MonoBehaviour
 {
-    public static WorldRenderer instance { get; private set; }
+    public static PlantRenderer instance { get; private set; }
     public void Awake()
     {
         if (instance != null)
