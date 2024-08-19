@@ -14,19 +14,22 @@ class PlantSelector : MonoBehaviour
             yield return null;
         }
     }
+
+    HashSet<Vector2Int> GeneratePositions(Vector2Int position)
+    {
+         HashSet<Vector2Int> plantPositions = new();
+        foreach (Vector2Int offset in plantGeneratorOffsets){
+            plantPositions.Add(position + offset);
+        }
+        return plantPositions;
+    }
     public PlantGenerator GetPlantGenerator()
     {
 
         // return (rootPosition) => {
         //     return new HashSet<Vector2Int>();
         // };
-        return position => {
-            HashSet<Vector2Int> plantPositions = new();
-            foreach (Vector2Int offset in plantGeneratorOffsets){
-                plantPositions.Add(position + offset);
-            }
-            return plantPositions;
-        };
+        return GeneratePositions;
     }
 }
 

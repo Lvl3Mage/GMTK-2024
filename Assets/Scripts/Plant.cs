@@ -17,6 +17,8 @@ public class Plant : MonoBehaviour
 		growthPositions.UnionWith(positions);
 		WorldGrid.instance.AddGrowthPositions(growthPositions.ToArray());
 		rootPosition = root;
+		
+		
 		// AddPlantPosition(root);
 	}
 

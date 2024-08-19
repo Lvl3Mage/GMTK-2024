@@ -26,7 +26,6 @@ public class WorldGrid : MonoBehaviour
         return gridBounds;
     }
     
-    
     public bool CellTargetable(Vector2Int position)
     {
         MapCellType cellType = GetMapTypeAt(position);
