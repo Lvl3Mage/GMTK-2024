@@ -4,6 +4,24 @@ using UnityEngine;
 
 public static class CellUtils
 {
+	public static Vector2Int[] GetTrueCellNeighbours(Vector2Int cell, bool includeCenter = false)
+	{
+		if (includeCenter){
+			return new Vector2Int[]{
+				cell + Vector2Int.down,
+				cell + Vector2Int.left,
+				cell,
+				cell + Vector2Int.right,
+				cell + Vector2Int.up,
+			};
+		}
+		return new Vector2Int[]{
+			cell + Vector2Int.down,
+			cell + Vector2Int.left,
+			cell + Vector2Int.right,
+			cell + Vector2Int.up,
+		};
+	}
 	public static Vector2Int[] GetCellNeighbours(Vector2Int cell, bool includeCenter = false)
 	{
 		

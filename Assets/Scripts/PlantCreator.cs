@@ -10,6 +10,7 @@ public class PlantCreator : MonoBehaviour
     [SerializeField] SpriteRenderer previewSpritePrefab;
     [SerializeField] Color previewColor;
     [SerializeField] Color previewErrorColor;
+    [SerializeField] Color previewOccupiedColor;
     PlantGenerator plantGenerator = position => {
 	    return new[]{ position};
     };
@@ -21,15 +22,22 @@ public class PlantCreator : MonoBehaviour
     public IEnumerator CreatePlant(PlantGenerator generator)
     {
 	    plantGenerator = generator;
-	    while(CanCreatePlant(targetRootPosition) && !Input.GetMouseButtonDown(0))
+	    while(!Input.GetMouseButtonDown(0) || !CanCreatePlant(targetRootPosition))
 	    {
 		    UpdateCreator();
 		    yield return null;
 	    }
+	    DrawWithPreviewPool(Array.Empty<Vector2Int>());
     }
     bool CanCreatePlant(Vector2Int rootPosition)
 	{
-	    return WorldGrid.instance.CellTargetable(rootPosition);
+		Vector2Int[] plantPositions = plantGenerator(rootPosition);
+		foreach (Vector2Int plantPosition in plantPositions){
+			if (!WorldGrid.instance.CellTargetable(rootPosition)){
+				return false;
+			}
+		}
+	    return WorldGrid.instance.CellTargetable(rootPosition) && WorldGrid.instance.GetPlantAt(rootPosition) == null;
 	}
 	void UpdateCreator()
     {
@@ -39,14 +47,7 @@ public class PlantCreator : MonoBehaviour
 		    return;
 	    }
 	    targetRootPosition = currentRootPosition;
-	    if(WorldGrid.instance.CellTargetable(targetRootPosition))
-	    {
-		    DrawWithPreviewPool(plantGenerator(targetRootPosition));
-	    }
-	    else
-	    {
-		    DrawWithPreviewPool(new[]{targetRootPosition}, ()=> previewErrorColor);
-	    }
+	    DrawWithPreviewPool(plantGenerator(targetRootPosition));
     }
     Vector2Int WorldToGrid(Vector2 worldPosition)
     {
@@ -54,7 +55,7 @@ public class PlantCreator : MonoBehaviour
     }
 
 	List<SpriteRenderer> previewPool = new();
-	void DrawWithPreviewPool(Vector2Int[] positions, Func<Color> getColor = null)
+	void DrawWithPreviewPool(Vector2Int[] positions, Func<Vector2Int,Color> getColor = null)
 	{
 		if(positions.Length > previewPool.Count)
 		{
@@ -62,17 +63,24 @@ public class PlantCreator : MonoBehaviour
 		}
 		if(getColor == null)
 		{
-			getColor = () => {
-				bool targetable = WorldGrid.instance.CellTargetable(targetRootPosition);
+			getColor = (pos) => {
+				bool targetable = WorldGrid.instance.CellTargetable(pos);
+				bool occupied = WorldGrid.instance.GetPlantAt(pos) != null;
+				if (occupied)
+				{
+					return previewOccupiedColor;
+				}
 				return targetable ? previewColor : previewErrorColor;
 			};
 		}
 
 		for (int i = 0; i < positions.Length; i++){
 			SpriteRenderer previewSr = previewPool[i];
-			previewSr.transform.position = (Vector2)positions[i];
+			Vector3 position = (Vector2)positions[i];
+			position.z = transform.position.z;
+			previewSr.transform.position = position;
 			previewSr.enabled = true;
-			previewSr.color = getColor();
+			previewSr.color = getColor(positions[i]);
 		}
 
 		for (int i = positions.Length; i < previewPool.Count; i++){

@@ -11,24 +11,29 @@ public class Plant : MonoBehaviour
 	public Color PlantColor => plantColor;
 	readonly HashSet<Vector2Int> growthPositions = new();
 	readonly HashSet<Vector2Int> plantPositions = new();
+	Vector2Int rootPosition;
 	public void Create(Vector2Int[] positions, Vector2Int root)
 	{
 		foreach (Vector2Int position in positions){
 			growthPositions.Add(position);
 		}
-		AddPlantPosition(root);
+		WorldGrid.instance.AddGrowthPositions(growthPositions.ToArray());
+		rootPosition = root;
+		// AddPlantPosition(root);
 	}
 
 	public void Grow()
 	{
 		HashSet<Vector2Int> growthTargets = new HashSet<Vector2Int>();
+		growthTargets.Add(rootPosition);
 		foreach (Vector2Int plantPosition in plantPositions){
-			Vector2Int[] cellNeighbours = CellUtils.GetCellNeighbours(plantPosition);
+			Vector2Int[] cellNeighbours = CellUtils.GetTrueCellNeighbours(plantPosition);
 			growthTargets.AddRange(cellNeighbours);
 		}
 		growthTargets.ExceptWith(plantPositions);
 		growthTargets.IntersectWith(growthPositions);
 		foreach (Vector2Int growthTarget in growthTargets){
+			Debug.Log($"Growing to {growthTarget}");
 			AddPlantPosition(growthTarget);
 		}
 	}

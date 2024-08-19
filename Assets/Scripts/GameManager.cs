@@ -17,6 +17,7 @@ public class GameManager : MonoBehaviour
 
     int level = 0;
     [SerializeField] float minZoom;
+    [SerializeField] float cameraBoundsPadding;
     void Start()
     {
         Bounds bounds = WorldGrid.instance.InitializeBounds(gridSize);
@@ -28,7 +29,7 @@ public class GameManager : MonoBehaviour
     {
         int gridArea = gridSize.x * gridSize.y;
         int plantCount = WorldGrid.instance.GetPlantCount();
-        return plantCount/5f >= gridArea;
+        return plantCount/15f >= gridArea;
     }
     IEnumerator RunGame()
     {
@@ -75,8 +76,15 @@ public class GameManager : MonoBehaviour
 
     CameraStateClamp GetCameraClamp(Bounds bounds)
     {
-       return new CameraStateClamp(CameraStateClamp.ClampMode.ClampBounds, bounds,
-            new Vector2(minZoom, 1000));
+        bounds = new Bounds(bounds.center, bounds.size);
+        Debug.Log($"Camera bounds: {bounds}");
+        bounds.Expand(cameraBoundsPadding*2);
+        Debug.Log($"Camera bounds: {bounds}");
+        float maxZoom = Mathf.Max(bounds.size.x * SceneCamera.GetCamera().aspect, bounds.size.y);
+        
+        
+        return new CameraStateClamp(CameraStateClamp.ClampMode.ClampPosition, bounds,
+            new Vector2(minZoom, maxZoom));
     }
     public static GameManager instance { get; private set; }
     public void Awake()

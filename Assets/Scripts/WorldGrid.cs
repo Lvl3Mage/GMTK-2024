@@ -10,7 +10,7 @@ public class WorldGrid : MonoBehaviour
     Bounds gridBounds;
     public Bounds InitializeBounds(Vector2Int gridSize)
     {
-        gridBounds = new Bounds(Vector3.zero, new Vector3(gridSize.x, gridSize.y, 0));
+        gridBounds = new Bounds(Vector3.zero, new Vector3(gridSize.x*2, gridSize.y*2, 0));
         return gridBounds;
     }
     public Bounds GridBounds => gridBounds;
@@ -21,7 +21,7 @@ public class WorldGrid : MonoBehaviour
     }
     public Bounds ExpandGridBounds(Vector2Int amount)
     {
-        gridBounds.Expand(new Vector3(amount.x, amount.y, 0));
+        gridBounds.Expand(new Vector3(amount.x*2, amount.y*2, 0));
         return gridBounds;
     }
     
@@ -86,8 +86,14 @@ public class WorldGrid : MonoBehaviour
 
     public void RegisterPlant(Vector2Int position, Plant plant)
     {
-        if (plantLookUp.ContainsKey(position)){
-            Debug.LogWarning($"existing plant in {position}");
+        if(plantLookUp.ContainsKey(position)){
+            if(plantLookUp[position] == plant)
+            {
+                Debug.LogWarning("Trying to register the same plant twice");
+                return;
+            }
+            
+            plantLookUp[position].DestroyPlant();
         }
 
         plantLookUp.Add(position, plant);

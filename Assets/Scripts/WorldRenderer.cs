@@ -38,14 +38,14 @@ public class WorldRenderer : MonoBehaviour
     void SpawnRenderers(Vector2Int[] positions)
     {
         foreach (Vector2Int position in positions){
-            Vector2 worldPosition = GetWorldTilePosition(position);
+            Vector3 worldPosition = GetWorldTilePosition(position);
             PlantCellRenderer plantCellRenderer = Instantiate(plantCellRendererPrefab, worldPosition, Quaternion.identity);
             rendererGrid.Add(position, plantCellRenderer);
         }
     }
-    public Vector2 GetWorldTilePosition(Vector2Int position)
+    public Vector3 GetWorldTilePosition(Vector2Int position)
     {
-        return new Vector2(position.x, position.y) + Vector2.one * 0.5f;
+        return new Vector3(position.x, position.y, transform.position.z) + new Vector3(1,1,0) * 0.5f;
     }
     public class FillGroup
     {

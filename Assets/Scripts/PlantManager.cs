@@ -20,7 +20,9 @@ public class PlantManager : MonoBehaviour
     /// <param name="rootPosition">the coordinates of the first Plant</param>
     public void SpawnPlant(Vector2Int[] positions, Vector2Int rootPosition)
     {
-        Plant newPlant = Instantiate(plantPrefab, (Vector2)rootPosition, Quaternion.identity);
+        Vector3 position = (Vector2)rootPosition;
+        position.z = transform.position.z;
+        Plant newPlant = Instantiate(plantPrefab, position, Quaternion.identity);
         newPlant.Create(positions, rootPosition);
         plants.Add(newPlant);
         newPlant.OnDestroyed += RemovePlant;
@@ -35,11 +37,11 @@ public class PlantManager : MonoBehaviour
 
     public IEnumerator UpdatePlants()
     {
-        foreach (Plant plant in plants)
-        {
+        for (int index = plants.Count-1; index >= 0; index--){
+            Plant plant = plants[index];
             plant.Grow();
         }
-        
+
         HashSet<Vector2Int> plantAdditions = WorldGrid.instance.GetPlantAdditions();
         HashSet<Vector2Int> plantRemovals = WorldGrid.instance.GetPlantRemovals();
         WorldGrid.instance.ClearPlantChanges();
@@ -67,6 +69,7 @@ public class PlantManager : MonoBehaviour
         
         WorldRenderer.instance.InitiateShake();
         yield return new WaitForSeconds(plantShakeTime);
+        
         WorldRenderer.instance.InitiateSpriteChange();
         yield return new WaitForSeconds(plantAnimationTime);
         

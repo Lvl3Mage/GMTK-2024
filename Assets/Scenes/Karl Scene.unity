@@ -160,7 +160,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 249060846}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.5732737, y: -0.21720617, z: -0.04184656}
+  m_LocalPosition: {x: 6.5732737, y: -0.21720617, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -527,6 +527,7 @@ MonoBehaviour:
   gridSize: {x: 5, y: 5}
   gridExpandAmount: {x: 2, y: 2}
   minZoom: 5
+  cameraBoundsPadding: 0
 --- !u!4 &1327722752
 Transform:
   m_ObjectHideFlags: 0
@@ -631,7 +632,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1668031026}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 6.5732737, y: -0.21720617, z: -0.04184656}
+  m_LocalPosition: {x: 6.5732737, y: -0.21720617, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -670,6 +671,7 @@ MonoBehaviour:
   previewSpritePrefab: {fileID: 1158417086172425045, guid: f52c86663614eb94b9a528ec5412a4a5, type: 3}
   previewColor: {r: 1, g: 1, b: 1, a: 0.50980395}
   previewErrorColor: {r: 1, g: 0, b: 0, a: 0.50980395}
+  previewOccupiedColor: {r: 0.97662073, g: 1, b: 0.4292453, a: 0.50980395}
 --- !u!4 &2025994125
 Transform:
   m_ObjectHideFlags: 0
@@ -678,7 +680,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2025994123}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.94187355, y: 3.6145768, z: 0.0007391982}
+  m_LocalPosition: {x: 0.94187355, y: 3.6145768, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
