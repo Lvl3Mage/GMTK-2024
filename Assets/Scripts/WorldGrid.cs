@@ -7,6 +7,34 @@ using UnityEngine;
 
 public class WorldGrid : MonoBehaviour
 {
+    Bounds gridBounds;
+    public Bounds InitializeBounds(Vector2Int gridSize)
+    {
+        gridBounds = new Bounds(Vector3.zero, new Vector3(gridSize.x, gridSize.y, 0));
+        return gridBounds;
+    }
+    public Bounds GridBounds => gridBounds;
+    public Vector2Int GridSize => new Vector2Int((int)gridBounds.size.x, (int)gridBounds.size.y);
+    public void SetGridBounds(Bounds bounds)
+    {
+        gridBounds = bounds;
+    }
+    public Bounds ExpandGridBounds(Vector2Int amount)
+    {
+        gridBounds.Expand(new Vector3(amount.x, amount.y, 0));
+        return gridBounds;
+    }
+    
+    
+    public bool CellTargetable(Vector2Int position)
+    {
+        MapCellType cellType = GetMapTypeAt(position);
+        if (cellType == MapCellType.Water)
+        {
+            return false;
+        }
+        return gridBounds.Contains((Vector2)position);
+    }
     readonly Dictionary<Vector2Int, Plant> plantLookUp = new();
     readonly Dictionary<Vector2Int, int> growthLookUp = new();
     readonly Dictionary<Vector2Int, MapCellType> mapLookup = new();
@@ -39,7 +67,7 @@ public class WorldGrid : MonoBehaviour
     /// <summary>
     /// WorldGrid Singleton instance
     /// </summary>
-    public static WorldGrid instance { get; private set; }
+    public static WorldGrid instance { get; private set; } 
 
     /// <summary>
     /// Initializes the WorldGrid Singleton
@@ -149,6 +177,11 @@ public class WorldGrid : MonoBehaviour
         return MapCellType.Land;
     }
 
+
+    public int GetPlantCount()
+    {
+        return plantLookUp.Count;
+    }
 }
 
 

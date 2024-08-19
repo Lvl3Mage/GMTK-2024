@@ -21,11 +21,11 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _BaseTexture:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: e6c61c72be40bb845ac7d378c1fda3e1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BorderTexture:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: e6c61c72be40bb845ac7d378c1fda3e1, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Tiles:
@@ -61,7 +61,7 @@ Material:
     - _VertexTintPosterizeSteps: 1.61
     m_Colors:
     - _BaseTint: {r: 0, g: 0.20754719, b: 0.011516351, a: 1}
-    - _BorderTint: {r: 0.0048379623, g: 0.18867922, b: 0, a: 1}
+    - _BorderTint: {r: 0.26009423, g: 0.3207547, b: 0.246618, a: 1}
     - _Tint: {r: 1, g: 1, b: 1, a: 1}
     - _TintBottomLeft: {r: 0.26389903, g: 0.4433962, b: 0, a: 0}
     - _TintBottomRight: {r: 0.2627451, g: 0.44313726, b: 0, a: 0}

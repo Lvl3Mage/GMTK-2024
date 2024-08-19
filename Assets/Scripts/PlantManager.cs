@@ -12,37 +12,13 @@ public class PlantManager : MonoBehaviour
     [SerializeField] Plant plantPrefab;
     [SerializeField] float plantShakeTime = 1f;
     [SerializeField] float plantAnimationTime = 1f;
-    [ParentActionButton("Iterate", nameof(Iterate), hideField:true)]
-    [SerializeField] string iterateButton;
-    
-    [ParentActionButton("Spawn Plant", nameof(SpawnPlant), hideField:true)]
-    [SerializeField] string spawnPlantButton;
-    [SerializeField] Vector2Int[] plantPositions;
-    [SerializeField] int rootPositionIndex;
 
-    void OnDrawGizmos()
-    {
-        Gizmos.color = Color.green;
-        foreach (Vector2Int position in plantPositions)
-        {
-            Gizmos.DrawWireCube((Vector2)position, Vector3.one);
-        }
-    }
-
-    void SpawnPlant()
-    {
-        CreatePlant(plantPositions, plantPositions[rootPositionIndex]);
-    }
-    void Iterate()
-    {
-        StartCoroutine(UpdateIteration());
-    }
     /// <summary>
     /// Create a new Plant with all its functions.
     /// </summary>
     /// <param name="positions">the coordinates where it will be created</param>
     /// <param name="rootPosition">the coordinates of the first Plant</param>
-    void CreatePlant(Vector2Int[] positions, Vector2Int rootPosition)
+    public void SpawnPlant(Vector2Int[] positions, Vector2Int rootPosition)
     {
         Plant newPlant = Instantiate(plantPrefab, (Vector2)rootPosition, Quaternion.identity);
         newPlant.Create(positions, rootPosition);
@@ -56,18 +32,13 @@ public class PlantManager : MonoBehaviour
         Debug.Log($"Plant removed from root position {plant.transform.position}");
     }
 
-    void UpdatePlants()
+
+    public IEnumerator UpdatePlants()
     {
         foreach (Plant plant in plants)
         {
             plant.Grow();
         }
-    }
-
-    IEnumerator UpdateIteration()
-    {
-        UpdatePlants();
-        Debug.Log("Plants updated");
         
         HashSet<Vector2Int> plantAdditions = WorldGrid.instance.GetPlantAdditions();
         HashSet<Vector2Int> plantRemovals = WorldGrid.instance.GetPlantRemovals();
@@ -85,7 +56,6 @@ public class PlantManager : MonoBehaviour
             }
             plantGroups[plant].Add(addition);
         }
-        Debug.Log($"Plant Additions {plantAdditions.Count}");
         WorldRenderer.FillGroup[] fillGroups = new WorldRenderer.FillGroup[plantGroups.Count];
         int i = 0;
         foreach (KeyValuePair<Plant, HashSet<Vector2Int>> plantGroup in plantGroups){
