@@ -1,5 +1,6 @@
 #nullable enable
 using System.Collections;
+using Lvl3Mage.EditorEnhancements.Runtime;
 using UnityEngine;
 
 public class PlantCellRenderer : MonoBehaviour
@@ -10,6 +11,9 @@ public class PlantCellRenderer : MonoBehaviour
     [SerializeField] int tileIndex = 0;
     Color[] quadrantColors = new Color[4];
     [SerializeField] float shakeDuration = 1f;
+
+    [SerializeField] [ParentActionButton("Apply Changes", nameof(UpdateSprite))]
+    string btn;
 
     void Awake()
     {

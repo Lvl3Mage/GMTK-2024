@@ -97,7 +97,6 @@ public class WorldGrid : MonoBehaviour
         }
 
         plantLookUp.Add(position, plant);
-        removedCells.Remove(position);
         addedCells.Add(position);
     }
 
@@ -106,7 +105,6 @@ public class WorldGrid : MonoBehaviour
         if(plantLookUp.ContainsKey(position))
         {
             plantLookUp.Remove(position);
-            addedCells.Remove(position);
             removedCells.Add(position);
         }
         else

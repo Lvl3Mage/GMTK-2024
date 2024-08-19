@@ -121,6 +121,7 @@ public class WorldRenderer : MonoBehaviour
             }
             
             plantCellRenderer.SetData(quadrantFillData, quadrantColors);
+            
         }
     }
     Color GetAverageColor(Vector2Int[] positions)

@@ -33,7 +33,7 @@ public class PlantCreator : MonoBehaviour
 	{
 		Vector2Int[] plantPositions = plantGenerator(rootPosition);
 		foreach (Vector2Int plantPosition in plantPositions){
-			if (!WorldGrid.instance.CellTargetable(rootPosition)){
+			if (!WorldGrid.instance.CellTargetable(plantPosition)){
 				return false;
 			}
 		}
