@@ -9,6 +9,7 @@ public class SoundController : MonoBehaviour
 
     [Header("--------- Audio Clip ---------")]
     public AudioClip background;
+    public AudioClip dog;
 
     [Header("--------- Audio Source ---------")]
     public AudioSource sfxSource;
@@ -48,6 +49,11 @@ public class SoundController : MonoBehaviour
 
         int randomIndex = Random.Range(0, effectSounds.Length);
         sfxSource.PlayOneShot(effectSounds[randomIndex]);
+    }
+
+    public void PlayDog()
+    {
+        sfxSource.PlayOneShot(dog);
     }
 
     // Método genérico para reproducir un sonido aleatorio de cualquier array
