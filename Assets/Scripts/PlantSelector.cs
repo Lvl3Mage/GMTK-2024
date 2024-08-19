@@ -25,10 +25,6 @@ class PlantSelector : MonoBehaviour
     }
     public PlantGenerator GetPlantGenerator()
     {
-
-        // return (rootPosition) => {
-        //     return new HashSet<Vector2Int>();
-        // };
         return GeneratePositions;
     }
 }
