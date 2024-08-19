@@ -133,7 +133,7 @@ GameObject:
   - component: {fileID: 249060848}
   - component: {fileID: 249060847}
   m_Layer: 0
-  m_Name: WR
+  m_Name: Plant Renderer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -494,6 +494,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db1034a972ba00348b246d18c8839fa9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  initialWaterPosition: []
 --- !u!4 &1054991283
 Transform:
   m_ObjectHideFlags: 0
@@ -738,9 +739,6 @@ MonoBehaviour:
   plantGeneratorOffsets:
   - {x: 0, y: 0}
   - {x: 1, y: 0}
-  - {x: 2, y: 0}
-  - {x: 2, y: 1}
-  - {x: 2, y: 2}
 --- !u!4 &2046656694
 Transform:
   m_ObjectHideFlags: 0
