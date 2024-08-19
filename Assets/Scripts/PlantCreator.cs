@@ -11,8 +11,10 @@ public class PlantCreator : MonoBehaviour
     [SerializeField] Color previewColor;
     [SerializeField] Color previewErrorColor;
     [SerializeField] Color previewOccupiedColor;
-    PlantGenerator plantGenerator = position => {
-	    return new[]{ position};
+    PlantGenerator plantGenerator = (position) => {
+	    HashSet<Vector2Int> points = new HashSet<Vector2Int>();
+	    points.Add(position);
+	    return points;
     };
 
 
@@ -27,11 +29,11 @@ public class PlantCreator : MonoBehaviour
 		    UpdateCreator();
 		    yield return null;
 	    }
-	    DrawWithPreviewPool(Array.Empty<Vector2Int>());
+	    DrawWithPreviewPool(new HashSet<Vector2Int>());
     }
     bool CanCreatePlant(Vector2Int rootPosition)
 	{
-		Vector2Int[] plantPositions = plantGenerator(rootPosition);
+		HashSet<Vector2Int> plantPositions = plantGenerator(rootPosition);
 		foreach (Vector2Int plantPosition in plantPositions){
 			if (!WorldGrid.instance.CellTargetable(plantPosition)){
 				return false;
@@ -55,11 +57,11 @@ public class PlantCreator : MonoBehaviour
     }
 
 	List<SpriteRenderer> previewPool = new();
-	void DrawWithPreviewPool(Vector2Int[] positions, Func<Vector2Int,Color> getColor = null)
+	void DrawWithPreviewPool(HashSet<Vector2Int> positions, Func<Vector2Int,Color> getColor = null)
 	{
-		if(positions.Length > previewPool.Count)
+		if(positions.Count > previewPool.Count)
 		{
-			ExpandPreviewPool(positions.Length - previewPool.Count);
+			ExpandPreviewPool(positions.Count - previewPool.Count);
 		}
 		if(getColor == null)
 		{
@@ -73,17 +75,19 @@ public class PlantCreator : MonoBehaviour
 				return targetable ? previewColor : previewErrorColor;
 			};
 		}
-
-		for (int i = 0; i < positions.Length; i++){
-			SpriteRenderer previewSr = previewPool[i];
-			Vector3 position = (Vector2)positions[i];
-			position.z = transform.position.z;
-			previewSr.transform.position = position;
+		int previewIndex = 0;
+		foreach (Vector2Int position in positions){
+			SpriteRenderer previewSr = previewPool[previewIndex];
+			Vector3 worldPos = (Vector2)position;
+			worldPos.z = transform.position.z;
+			previewSr.transform.position = worldPos;
 			previewSr.enabled = true;
-			previewSr.color = getColor(positions[i]);
+			previewSr.color = getColor(position);
+			previewIndex++;
+
 		}
 
-		for (int i = positions.Length; i < previewPool.Count; i++){
+		for (int i = positions.Count; i < previewPool.Count; i++){
 			SpriteRenderer previewSr = previewPool[i];
 			previewSr.enabled = false;
 		}
@@ -97,9 +101,11 @@ public class PlantCreator : MonoBehaviour
 		}
 	}
 
-	public Vector2Int[] GetPlantPositions()
+	public HashSet<Vector2Int> GetPlantPositions()
 	{
-		return plantGenerator(targetRootPosition);
+		HashSet<Vector2Int> plantPositions = plantGenerator(targetRootPosition);
+		plantPositions.Add(targetRootPosition);
+		return plantPositions;
 	}
 
 	public Vector2Int GetRootPosition()

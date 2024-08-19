@@ -12,11 +12,9 @@ public class Plant : MonoBehaviour
 	readonly HashSet<Vector2Int> growthPositions = new();
 	readonly HashSet<Vector2Int> plantPositions = new();
 	Vector2Int rootPosition;
-	public void Create(Vector2Int[] positions, Vector2Int root)
+	public void Create(HashSet<Vector2Int> positions, Vector2Int root)
 	{
-		foreach (Vector2Int position in positions){
-			growthPositions.Add(position);
-		}
+		growthPositions.UnionWith(positions);
 		WorldGrid.instance.AddGrowthPositions(growthPositions.ToArray());
 		rootPosition = root;
 		// AddPlantPosition(root);

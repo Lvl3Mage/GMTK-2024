@@ -48,7 +48,7 @@ public class GameManager : MonoBehaviour
             yield return plantCreator.CreatePlant(plantGenerator);
             
             
-            Vector2Int[] plantPositions = plantCreator.GetPlantPositions();
+            HashSet<Vector2Int> plantPositions = plantCreator.GetPlantPositions();
             Vector2Int rootPosition = plantCreator.GetRootPosition();
             plantManager.SpawnPlant(plantPositions, rootPosition);
             yield return plantManager.UpdatePlants();

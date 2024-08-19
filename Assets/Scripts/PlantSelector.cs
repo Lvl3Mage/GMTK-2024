@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 class PlantSelector : MonoBehaviour
 {
     [SerializeField] Vector2Int[] plantGeneratorOffsets;
+    int a;
     public IEnumerator SelectPlant()
     {
         while (false)
@@ -12,18 +14,20 @@ class PlantSelector : MonoBehaviour
             yield return null;
         }
     }
-
     public PlantGenerator GetPlantGenerator()
     {
-        return position => {
-            Vector2Int[] plantPositions = new Vector2Int[plantGeneratorOffsets.Length];
-            for (int i = 0; i < plantGeneratorOffsets.Length; i++){
-                plantPositions[i] = position + plantGeneratorOffsets[i];
-            }
 
+        // return (rootPosition) => {
+        //     return new HashSet<Vector2Int>();
+        // };
+        return position => {
+            HashSet<Vector2Int> plantPositions = new();
+            foreach (Vector2Int offset in plantGeneratorOffsets){
+                plantPositions.Add(position + offset);
+            }
             return plantPositions;
         };
     }
 }
 
-public delegate Vector2Int[] PlantGenerator(Vector2Int rootPosition);
+public delegate HashSet<Vector2Int> PlantGenerator(Vector2Int rootPosition);
