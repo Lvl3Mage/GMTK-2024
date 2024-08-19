@@ -90,7 +90,7 @@ public class WorldRenderer : MonoBehaviour
         foreach (Vector2Int updatedPosition in fillPositions){
             Vector2Int[] neighbours = CellUtils.GetCellQuadrant(updatedPosition - Vector2Int.one);
             foreach (Vector2Int neighbour in neighbours){
-                Debug.Log($"Adding neighbour {neighbour}");
+                // Debug.Log($"Adding neighbour {neighbour}");
             }
             affectedRendererPositions.UnionWith(neighbours);
         }

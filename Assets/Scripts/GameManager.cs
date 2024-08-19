@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
 {
     [SerializeField] CameraModuleManager cameraModuleManager;
     [SerializeField] CameraPanModule cameraPanModule;
+    [SerializeField] CameraGridController cameraGridController;
 
     [SerializeField] PlantManager plantManager;
     [SerializeField] PlantCreator plantCreator;
@@ -17,25 +18,23 @@ public class GameManager : MonoBehaviour
 
     int level = 0;
     [SerializeField] float minZoom;
-    [SerializeField] float cameraBoundsPadding;
     void Start()
     {
         Bounds bounds = WorldGrid.instance.InitializeBounds(gridSize);
-        cameraPanModule.SetClamp(GetCameraClamp(bounds));
+        cameraPanModule.SetClamp(cameraGridController.GetCameraClamp(bounds));
         StartCoroutine(RunGame());
     }
 
     bool LevelComplete(int level)
     {
-        int gridArea = gridSize.x * gridSize.y;
-        int plantCount = WorldGrid.instance.GetPlantCount();
-        return plantCount/15f >= gridArea;
+        return plantManager.GetPlantCount() > level;
     }
+
     IEnumerator RunGame()
     {
         while (true){
             yield return RunLevel();
-            
+            level++;
             yield return ExpandGrid(gridExpandAmount);
         }
     }
@@ -61,30 +60,12 @@ public class GameManager : MonoBehaviour
     {
         gridSize += amount;
         Bounds newBounds = WorldGrid.instance.ExpandGridBounds(amount);
-        CameraStateClamp cameraStateClamp = GetCameraClamp(newBounds);
-        cameraPanModule.SetClamp(cameraStateClamp);
+        cameraPanModule.SetClamp(cameraGridController.GetCameraClamp(newBounds));
         cameraModuleManager.SwitchToController(1);
-        
+        yield return cameraGridController.ExpandTo(newBounds);
         //Todo camera controller should expand to grid bounds
-        
-        cameraPanModule.AdaptToCamera();
+        cameraPanModule.AdaptToState(cameraGridController.GetCameraState());
         cameraModuleManager.SwitchToController(0);
-        
-        
-        yield return null;
-    }
-
-    CameraStateClamp GetCameraClamp(Bounds bounds)
-    {
-        bounds = new Bounds(bounds.center, bounds.size);
-        Debug.Log($"Camera bounds: {bounds}");
-        bounds.Expand(cameraBoundsPadding*2);
-        Debug.Log($"Camera bounds: {bounds}");
-        float maxZoom = Mathf.Max(bounds.size.x * SceneCamera.GetCamera().aspect, bounds.size.y);
-        
-        
-        return new CameraStateClamp(CameraStateClamp.ClampMode.ClampPosition, bounds,
-            new Vector2(minZoom, maxZoom));
     }
     public static GameManager instance { get; private set; }
     public void Awake()

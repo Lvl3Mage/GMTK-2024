@@ -10,7 +10,8 @@ public class WorldGrid : MonoBehaviour
     Bounds gridBounds;
     public Bounds InitializeBounds(Vector2Int gridSize)
     {
-        gridBounds = new Bounds(Vector3.zero, new Vector3(gridSize.x*2, gridSize.y*2, 0));
+        gridBounds = new Bounds();
+        gridBounds.Expand((Vector2)gridSize*2);
         return gridBounds;
     }
     public Bounds GridBounds => gridBounds;
@@ -54,6 +55,8 @@ public class WorldGrid : MonoBehaviour
             Gizmos.color = Color.gray;
             Gizmos.DrawWireSphere((Vector2)addedCell, 0.1f);
         }
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireCube(gridBounds.center, gridBounds.size);
     }
 
     /// <summary>
@@ -189,7 +192,7 @@ public class WorldGrid : MonoBehaviour
 
     public HashSet<Vector2Int> GetWaterCells() => new(waterPositions);
 
-    public int GetPlantCount()
+    public int GetPlantCellCount()
     {
         return plantLookUp.Count;
     }
