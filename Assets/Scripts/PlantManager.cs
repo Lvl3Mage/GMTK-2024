@@ -25,6 +25,7 @@ public class PlantManager : MonoBehaviour
         Plant newPlant = Instantiate(plantPrefab, position, Quaternion.identity);
         newPlant.Create(positions, rootPosition);
         plants.Add(newPlant);
+        Debug.Log($"Plant created at root position {rootPosition}, plant count {plants.Count}");
         newPlant.OnDestroyed += RemovePlant;
     }
 
@@ -74,6 +75,10 @@ public class PlantManager : MonoBehaviour
         yield return new WaitForSeconds(plantAnimationTime);
         
     }
-    
+
+    public int GetPlantCount()
+    {
+        return plants.Count;
+    }
 }
 
