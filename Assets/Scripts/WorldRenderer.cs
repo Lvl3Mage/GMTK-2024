@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 public class WorldRenderer : MonoBehaviour
 {
@@ -27,6 +28,8 @@ public class WorldRenderer : MonoBehaviour
     HashSet<Vector2Int> filledCells = new();
     HashSet<Vector2Int> pendingRendererUpdates = new();
     Dictionary<Vector2Int,Color> filledCellColors = new();
+
+
 
     void GenerateRenderGrid(HashSet<Vector2Int> generationPositions)
     {

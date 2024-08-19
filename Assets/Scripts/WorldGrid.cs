@@ -14,7 +14,7 @@ public class WorldGrid : MonoBehaviour
         return gridBounds;
     }
     public Bounds GridBounds => gridBounds;
-    public Vector2Int GridSize => new Vector2Int((int)gridBounds.size.x, (int)gridBounds.size.y);
+    public Vector2Int GridSize => new Vector2Int((int)gridBounds.size.x + 1, (int)gridBounds.size.y + 1);
     public void SetGridBounds(Bounds bounds)
     {
         gridBounds = bounds;
@@ -37,7 +37,9 @@ public class WorldGrid : MonoBehaviour
     }
     readonly Dictionary<Vector2Int, Plant> plantLookUp = new();
     readonly Dictionary<Vector2Int, int> growthLookUp = new();
-    readonly Dictionary<Vector2Int, MapCellType> mapLookup = new();
+    readonly HashSet<Vector2Int> waterPositions = new();
+
+    [SerializeField] Vector2Int[] initialWaterPosition;
 
     void OnDrawGizmos()
     {
@@ -80,8 +82,12 @@ public class WorldGrid : MonoBehaviour
             Destroy(gameObject);
             return;
         }
-
         instance = this;
+
+        foreach(Vector2Int pos in initialWaterPosition)
+        {
+            waterPositions.Add(pos);
+        }
     }
 
     public void RegisterPlant(Vector2Int position, Plant plant)
@@ -174,23 +180,17 @@ public class WorldGrid : MonoBehaviour
 
     public MapCellType GetMapTypeAt(Vector2Int position)
     {
-        if(mapLookup.ContainsKey(position))
+        if (waterPositions.Contains(position))
         {
-            return mapLookup[position];
+            return MapCellType.Water;
         }
         return MapCellType.Land;
     }
 
+    public HashSet<Vector2Int> GetWaterCells() => new(waterPositions);
 
     public int GetPlantCount()
     {
         return plantLookUp.Count;
     }
-}
-
-
-public enum MapCellType
-{
-    Land,
-    Water
 }
