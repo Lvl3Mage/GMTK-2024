@@ -51,6 +51,22 @@ public class PlantRenderer : MonoBehaviour
     {
         return new Vector3(position.x, position.y, transform.position.z) + new Vector3(1,1,0) * 0.5f;
     }
+    public class FillGroup
+    {
+        public FillGroup(HashSet<Vector2Int> positions, Color color)
+        {
+            this.positions = positions;
+            this.color = color;
+        }
+        public HashSet<Vector2Int> positions = new();
+        public Color color;
+    }
+    public void AddFilledCells(FillGroup[] fillGroups)
+    {
+        foreach (FillGroup fillGroup in fillGroups){
+            AddFilledCells(fillGroup.positions, fillGroup.color);
+        }
+    }
     public void AddFilledCells(HashSet<Vector2Int> positionsToFill, Color color)
     {
         filledCells.UnionWith(positionsToFill);

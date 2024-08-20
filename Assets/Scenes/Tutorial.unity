@@ -1585,7 +1585,7 @@ MonoBehaviour:
   plantCreator: {fileID: 2025994124}
   plantSelector: {fileID: 2046656693}
   gridSize: {x: 2, y: 2}
-  gridExpandAmount: {x: 4, y: 2}
+  gridExpandAmount: {x: 2, y: 1}
   map: {fileID: 1671643597}
   plantRequirementDisplay: {fileID: 1711380128}
   stagePlantRequirements: 0100000003000000
