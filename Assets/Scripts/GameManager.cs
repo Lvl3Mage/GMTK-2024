@@ -58,7 +58,7 @@ public class GameManager : MonoBehaviour
     }
     void Update()
     {
-        plantRequirementDisplay.Set((stage - plantManager.GetPlantCount() + 1));
+        plantRequirementDisplay.Set(GetPlantRequirement(stage));
         if (Input.GetKey(KeyCode.LeftShift))
         {
             cameraModuleManager.UseUserInput(false);
