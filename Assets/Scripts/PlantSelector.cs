@@ -32,7 +32,6 @@ class PlantSelector : MonoBehaviour
 
     PlantGenerator CreatePlantShape()
     {
-        HashSet<Vector2Int> plantPositions = new() { Vector2Int.zero }; //Origin position by default
         //Calculate average plant size on current stage
         int freeCells = WorldGrid.instance.GetFreeCellAmount();
         targetPlantSize = (freeCells - sparedCellsMargin) / (GameManager.instance.GetCurrentGoal() - PlantManager.instance.GetPlantCount());
@@ -43,14 +42,14 @@ class PlantSelector : MonoBehaviour
         int plantSize = UnityEngine.Random.Range(min, max);
         plantSize = Math.Clamp(plantSize, minPlantSize, Math.Max(minPlantSize, targetPlantSize + aboveSizeOffset));
         currentTax -= targetPlantSize - plantSize;
-        print(plantSize);
         
-        while(plantPositions.Count < plantSize)
-        {
-            Vector2Int seed = plantPositions.ElementAt(UnityEngine.Random.Range(0, plantPositions.Count));
-            Vector2Int newTile = GetRandAdjacent(seed, plantPositions);
-            plantPositions.Add(newTile);
-        }
+        HashSet<Vector2Int> plantPositions = GenerateShapeWithSize(plantSize);
+        // while(plantPositions.Count < plantSize)
+        // {
+        //     Vector2Int seed = plantPositions.ElementAt(UnityEngine.Random.Range(0, plantPositions.Count));
+        //     Vector2Int newTile = GetRandAdjacent(seed, plantPositions);
+        //     plantPositions.Add(newTile);
+        // }
 
         return position => LocalToGlobal(plantPositions, position);
     }
@@ -71,6 +70,7 @@ class PlantSelector : MonoBehaviour
     {
         const int sampleCount = 6;
         HashSet<Vector2Int> possibleStartingPositions = GetOpenCells();
+        Debug.Log("Possible starting positions: " + possibleStartingPositions.Count);
         HashSet<Vector2Int> startingPositions = new();
         for (int i = 0; i < sampleCount; i++){
             if (possibleStartingPositions.Count == 0){
@@ -78,18 +78,28 @@ class PlantSelector : MonoBehaviour
             }
             startingPositions.Add(possibleStartingPositions.ElementAt(UnityEngine.Random.Range(0, possibleStartingPositions.Count)));
         }
-        if (startingPositions.Count == 0){
-            //Todo random shape cuz we are fucked
-            return new HashSet<Vector2Int>{Vector2Int.zero};
+
+        HashSet<Vector2Int> bestShape = new(){Vector2Int.zero};
+        foreach (Vector2Int startingPosition in startingPositions){
+            Debug.Log("Trying to generate shape from " + startingPosition);
+            HashSet<Vector2Int> shape = GenerateValidShapeFromOffsets(startingPosition, size);
+            if (shape.Count > bestShape.Count){
+                bestShape = shape;
+            }
+            Debug.Log("Shape size: " + shape.Count);
         }
-        
-        
-        
+
+        return bestShape;
+
+
+
+
     }
 
-    HashSet<Vector2Int> GenerateValidShapeFromOffsets(Vector2Int position, int targetSize)
+    HashSet<Vector2Int> GenerateValidShapeFromOffsets(Vector2Int worldPosition, int targetSize)
     {
-        HashSet<Vector2Int> offsets = new(){ Vector2Int.zero };
+        Debug.Log("Generating shape from targetSize " + targetSize);
+        HashSet<Vector2Int> offsets = new();
         Queue<Vector2Int> queue = new();
         queue.Enqueue(Vector2Int.zero);
         while (queue.Count > 0 && offsets.Count < targetSize){
@@ -97,11 +107,15 @@ class PlantSelector : MonoBehaviour
             if (offsets.Contains(offset)){
                 continue;
             }
-            Vector2Int worldPos = offset + position;
-            
+            Vector2Int worldPos = offset + worldPosition;
+            Debug.Log("Checking " + worldPos);
             if (WorldGrid.instance.CellTargetable(worldPos) && !WorldGrid.instance.GetGrowthAt(worldPos)){
-                queue.Enqueue(offset);
                 offsets.Add(offset);
+                Debug.Log("Added " + offset);
+                Vector2Int[] neighbours = CellUtils.GetTrueCellNeighbours(Vector2Int.zero);
+                foreach (Vector2Int neighbour in neighbours){
+                    queue.Enqueue(neighbour);
+                }
             }
         }
 
@@ -117,7 +131,9 @@ class PlantSelector : MonoBehaviour
             for (int j = 0; j < gridSize.y; j++){
                 Vector2Int cell = new(i, j);
                 cell -= gridSize / 2;
+                Debug.Log("Checking cell " + cell);
                 if (WorldGrid.instance.CellTargetable(cell) && !WorldGrid.instance.GetGrowthAt(cell)){
+                    Debug.Log("Cell is open");
                     openCells.Add(cell);
                 }
             }

@@ -194,7 +194,10 @@ public class WorldGrid : MonoBehaviour
     /// </returns>
     public bool GetGrowthAt(Vector2Int position)
     {
-        return !plantLookUp.ContainsKey(position);
+        if(!growthLookUp.ContainsKey(position)){
+            return false;
+        }
+        return growthLookUp[position] > 0;
     }
 
     /// <summary>
