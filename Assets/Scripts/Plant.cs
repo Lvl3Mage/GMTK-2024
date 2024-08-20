@@ -109,6 +109,7 @@ public class Plant : MonoBehaviour
 		if (plantDestroyed){
 			return;
 		}
+
 		plantDestroyed = true;
 		Plant[] neighboursArr = neighbours.ToArray();
 
@@ -121,6 +122,7 @@ public class Plant : MonoBehaviour
 			WorldGrid.instance.RemovePlantAt(plantPosition);
 		}
 		WorldGrid.instance.RemoveGrowthPositions(growthPositions);
-		Destroy(gameObject);
+        SoundController.instance.PlayDestoyingBush();
+        Destroy(gameObject);
 	}
 }
