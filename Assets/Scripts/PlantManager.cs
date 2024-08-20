@@ -107,6 +107,7 @@ public class PlantManager : MonoBehaviour
 
         if (PlantRenderer.instance.RequiresSpriteChange()){
             PlantRenderer.instance.InitiateSpriteChange();
+            SoundController.instance.PlayEffectSound();
             yield return new WaitForSeconds(plantAnimationTime);
         }
     }
