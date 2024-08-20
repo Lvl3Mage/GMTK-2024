@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Lvl3Mage.CameraManagement2D;
 using UnityEngine;
 
 public class MouseFollowBehaviour : MonoBehaviour
@@ -13,6 +14,6 @@ public class MouseFollowBehaviour : MonoBehaviour
 
     void Update()
     {
-        TR.position = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        TR.position = SceneCamera.GetWorldMousePosition();
     }
 }
