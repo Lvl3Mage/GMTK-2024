@@ -19,6 +19,7 @@ class PlantSelector : MonoBehaviour
     /// </summary>
     [SerializeField] int sparedCellsMargin = 5;
     [SerializeField] int minPlantSize = 3;
+    [SerializeField] int maxSize;
     [Range(0, 1)][SerializeField] float RNGManipulation = 0.5f;
     int targetPlantSize = 6;
     int currentTax = 0;
@@ -43,7 +44,10 @@ class PlantSelector : MonoBehaviour
         int plantSize = UnityEngine.Random.Range(min, max);
         plantSize = Math.Clamp(plantSize, minPlantSize, Math.Max(minPlantSize, targetPlantSize + aboveSizeOffset));
         currentTax -= targetPlantSize - plantSize;
-        
+
+        if (maxSize > 0){
+            plantSize = Mathf.Min(plantSize, maxSize);
+        }
         HashSet<Vector2Int> plantPositions = GenerateShapeWithSize(plantSize);
         // while(plantPositions.Count < plantSize)
         // {
@@ -105,7 +109,6 @@ class PlantSelector : MonoBehaviour
         offsetsToCheck.Add(Vector2Int.zero);
         while (offsetsToCheck.Count > 0 && offsets.Count < targetSize){
             int index = Random.Range(0, offsetsToCheck.Count);
-            Debug.Log("Index: " + index);
             Vector2Int offset = offsetsToCheck[index];
             offsetsToCheck.RemoveAt(index);
             offsetsToCheck.Remove(offset);
@@ -118,8 +121,15 @@ class PlantSelector : MonoBehaviour
                 offsets.Add(offset);
                 // Debug.Log("Added " + offset);
                 Vector2Int[] neighbours = CellUtils.GetTrueCellNeighbours(offset);
+                neighbours.Shuffle();
+                int neighbourCount = Random.Range(1, 3);
+                int addedNeighbours = 0;
                 foreach (Vector2Int neighbour in neighbours){
                     offsetsToCheck.Add(neighbour);
+                    addedNeighbours++;
+                    if (addedNeighbours >= neighbourCount){
+                        break;
+                    }
                 }
             }
         }
@@ -136,9 +146,7 @@ class PlantSelector : MonoBehaviour
             for (int j = 0; j < gridSize.y; j++){
                 Vector2Int cell = new(i, j);
                 cell -= gridSize / 2;
-                Debug.Log("Checking cell " + cell);
                 if (WorldGrid.instance.CellTargetable(cell) && !WorldGrid.instance.GetGrowthAt(cell)){
-                    Debug.Log("Cell is open");
                     openCells.Add(cell);
                 }
             }

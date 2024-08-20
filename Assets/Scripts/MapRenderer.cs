@@ -110,21 +110,21 @@ public class MapRenderer : MonoBehaviour
 
         newTiles.Clear(); 
     }
-    private void OnDrawGizmos()
-    {
-        foreach(var pair in mapData)
-        {
-            if(pair.Value == MapCellType.Water)
-            {
-                Gizmos.color = Color.blue;
-            }
-            else
-            {
-                Gizmos.color = Color.red;
-            }
-            Gizmos.DrawSphere((Vector2)pair.Key, 0.5f);
-        }
-    }
+    // private void OnDrawGizmos()
+    // {
+    //     foreach(var pair in mapData)
+    //     {
+    //         if(pair.Value == MapCellType.Water)
+    //         {
+    //             Gizmos.color = Color.blue;
+    //         }
+    //         else
+    //         {
+    //             Gizmos.color = Color.red;
+    //         }
+    //         Gizmos.DrawSphere((Vector2)pair.Key, 0.5f);
+    //     }
+    // }
 }
 
 public enum MapCellType
