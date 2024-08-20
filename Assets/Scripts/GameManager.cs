@@ -30,7 +30,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] TextWriter plantRequirementDisplay;
     [SerializeField] int[] stagePlantRequirements;
     [SerializeField] float requirementsPerAddedArea;
+
     int stage = 0;
+    [SerializeField] int finalStage;
     void Start()
     {
         Bounds bounds = WorldGrid.instance.InitializeBounds(gridSize);
@@ -58,7 +60,15 @@ public class GameManager : MonoBehaviour
     }
     void Update()
     {
-        plantRequirementDisplay.Set(GetPlantRequirement(stage) - PlantManager.instance.GetPlantCount());
+        string currentPlants = plantManager.GetPlantCount().ToString();
+        string neededPlants = GetPlantRequirement(stage).ToString();
+
+        if(stage == finalStage)
+        {
+            SceneManager.LoadScene("EndScreen");
+        }
+
+        plantRequirementDisplay.Set(currentPlants + "/" + neededPlants);
         if (Input.GetKey(KeyCode.LeftShift))
         {
             cameraModuleManager.UseUserInput(false);
@@ -67,6 +77,7 @@ public class GameManager : MonoBehaviour
             cameraModuleManager.UseUserInput(true);
             
         }
+
     }
 
     bool IsStageComplete(int currentStage)

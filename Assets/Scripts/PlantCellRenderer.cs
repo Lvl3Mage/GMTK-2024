@@ -12,12 +12,15 @@ public class PlantCellRenderer : MonoBehaviour
     Color[] quadrantColors = new Color[4];
     [SerializeField] float shakeDuration = 1f;
 
+    [SerializeField] ParticleSystem particles;
+
     [SerializeField] [ParentActionButton("Apply Changes", nameof(UpdateSprite), hideField:true)]
     string btn;
 
     void Awake()
     {
         tileRenderer.material.SetFloat("_TileIndex", 0);
+        particles = GetComponent<ParticleSystem>();
     }
 
     public bool IsRendering()
