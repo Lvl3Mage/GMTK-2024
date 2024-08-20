@@ -8,6 +8,7 @@ using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.PlayerLoop;
 using UnityEngine.Tilemaps;
+using Random = UnityEngine.Random;
 
 class PlantSelector : MonoBehaviour
 {
@@ -100,21 +101,25 @@ class PlantSelector : MonoBehaviour
     {
         Debug.Log("Generating shape from targetSize " + targetSize);
         HashSet<Vector2Int> offsets = new();
-        Queue<Vector2Int> queue = new();
-        queue.Enqueue(Vector2Int.zero);
-        while (queue.Count > 0 && offsets.Count < targetSize){
-            Vector2Int offset = queue.Dequeue();
+        List<Vector2Int> offsetsToCheck = new();
+        offsetsToCheck.Add(Vector2Int.zero);
+        while (offsetsToCheck.Count > 0 && offsets.Count < targetSize){
+            int index = Random.Range(0, offsetsToCheck.Count);
+            Debug.Log("Index: " + index);
+            Vector2Int offset = offsetsToCheck[index];
+            offsetsToCheck.RemoveAt(index);
+            offsetsToCheck.Remove(offset);
             if (offsets.Contains(offset)){
                 continue;
             }
             Vector2Int worldPos = offset + worldPosition;
-            Debug.Log("Checking " + worldPos);
+            // Debug.Log("Checking " + worldPos);
             if (WorldGrid.instance.CellTargetable(worldPos) && !WorldGrid.instance.GetGrowthAt(worldPos)){
                 offsets.Add(offset);
-                Debug.Log("Added " + offset);
-                Vector2Int[] neighbours = CellUtils.GetTrueCellNeighbours(Vector2Int.zero);
+                // Debug.Log("Added " + offset);
+                Vector2Int[] neighbours = CellUtils.GetTrueCellNeighbours(offset);
                 foreach (Vector2Int neighbour in neighbours){
-                    queue.Enqueue(neighbour);
+                    offsetsToCheck.Add(neighbour);
                 }
             }
         }
