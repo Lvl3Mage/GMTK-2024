@@ -122,23 +122,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &7575375 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4020061599950958476, guid: be3129a6464ae6640b9587a927b6baf1, type: 3}
-  m_PrefabInstance: {fileID: 4020061598982108778}
-  m_PrefabAsset: {fileID: 0}
---- !u!225 &7575380
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7575375}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 0
-  m_BlocksRaycasts: 0
-  m_IgnoreParentGroups: 0
 --- !u!1 &185320834
 GameObject:
   m_ObjectHideFlags: 0
@@ -176,6 +159,8 @@ MonoBehaviour:
   musicTracks: []
   background: {fileID: 8300000, guid: ac8dc2c6b3c867249baca08d1a85a7dd, type: 3}
   dog: {fileID: 8300000, guid: 4ddfcf6bbf19b8642acf42321651f135, type: 3}
+  gong: {fileID: 8300000, guid: bacf75c026a3fe945bd043685d6d7e74, type: 3}
+  rope: {fileID: 8300000, guid: f3a036c85182f9543a099b3b08d270df, type: 3}
   sfxSource: {fileID: 185320836}
   musicSource: {fileID: 185320836}
 --- !u!82 &185320836
@@ -338,7 +323,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -15, y: -284.42}
+  m_AnchoredPosition: {x: -15, y: -255}
   m_SizeDelta: {x: 511.1535, y: 511.1535}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &477837711
@@ -504,14 +489,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1444810799913484735, guid: 529a18db1b74627459799826b121f372, type: 3}
-      propertyPath: prewarm
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1444810799913484735, guid: 529a18db1b74627459799826b121f372, type: 3}
-      propertyPath: playOnAwake
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3424180504925880611, guid: 529a18db1b74627459799826b121f372, type: 3}
       propertyPath: m_Name
       value: ParticleRain
@@ -562,6 +539,29 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 529a18db1b74627459799826b121f372, type: 3}
+--- !u!1 &563591712 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3424180504925880611, guid: 529a18db1b74627459799826b121f372, type: 3}
+  m_PrefabInstance: {fileID: 563591711}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &563591713
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 563591712}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f5fad003655e4e145bd49c2368f5af30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  particles: {fileID: 563591716}
+--- !u!198 &563591716 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 1444810799913484735, guid: 529a18db1b74627459799826b121f372, type: 3}
+  m_PrefabInstance: {fileID: 563591711}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &852897777
 GameObject:
   m_ObjectHideFlags: 0
@@ -859,10 +859,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1444810799913484735, guid: b6766efb1449da244810ec8811a5e12a, type: 3}
-      propertyPath: EmissionModule.rateOverTime.scalar
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 3424180504925880611, guid: b6766efb1449da244810ec8811a5e12a, type: 3}
       propertyPath: m_Name
       value: Particle System (1)
@@ -995,7 +991,7 @@ GameObject:
   - component: {fileID: 1346346188}
   - component: {fileID: 1346346191}
   m_Layer: 5
-  m_Name: dog
+  m_Name: PUTOPERRO
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1578,26 +1574,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1674501909, guid: be3129a6464ae6640b9587a927b6baf1, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: -7
-      objectReference: {fileID: 0}
-    - target: {fileID: 1674501910, guid: be3129a6464ae6640b9587a927b6baf1, type: 3}
-      propertyPath: m_Parameters.m_EndRange
-      value: 953.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1674501910, guid: be3129a6464ae6640b9587a927b6baf1, type: 3}
-      propertyPath: m_Parameters.m_StartRange
-      value: 649.9
-      objectReference: {fileID: 0}
-    - target: {fileID: 1674501910, guid: be3129a6464ae6640b9587a927b6baf1, type: 3}
-      propertyPath: m_Parameters.m_GravityFocus
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1674501910, guid: be3129a6464ae6640b9587a927b6baf1, type: 3}
-      propertyPath: m_Parameters.m_GravityCurve.scalar
-      value: -4
-      objectReference: {fileID: 0}
     - target: {fileID: 4020061599950958464, guid: be3129a6464ae6640b9587a927b6baf1, type: 3}
       propertyPath: m_Pivot.x
       value: 0

@@ -38,7 +38,7 @@ public class WorldGrid : MonoBehaviour
     }
     readonly Dictionary<Vector2Int, Plant> plantLookUp = new();
     readonly Dictionary<Vector2Int, int> growthLookUp = new();
-    readonly HashSet<Vector2Int> waterPositions = new();
+    public HashSet<Vector2Int> waterPositions = new();
 
     [SerializeField] Vector2Int[] initialWaterPosition;
 

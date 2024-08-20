@@ -19,6 +19,11 @@ public class levelLoader : MonoBehaviour
         }
     }
 
+    public void callForRestart()
+    {
+        transition.SetTrigger("restart");
+    }
+
     public void callForChangeScene()
     {
         transition.SetTrigger("start");
@@ -29,6 +34,11 @@ public class levelLoader : MonoBehaviour
         transition.SetTrigger("credits");
     }
 
+    public void LoadRestart()
+    {
+        string currentSceneName = SceneManager.GetActiveScene().name;
+        SceneManager.LoadScene(currentSceneName);
+    }
     public void LoadNextLevel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
