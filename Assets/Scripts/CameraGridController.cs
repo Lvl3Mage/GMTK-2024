@@ -44,11 +44,11 @@ public class CameraGridController : CameraController
 		while (accumTime < expandDuration)
 		{
 			float t = accumTime / expandDuration;
-			Debug.Log($"t {t}");
-			Debug.Log($"Test {spline(t).ZoomDelta}");
+			// Debug.Log($"t {t}");
+			// Debug.Log($"Test {spline(t).ZoomDelta}");
 			CameraStateTransform currentTransform = spline(t);
 			cameraState = initialState + currentTransform;
-			Debug.Log($"Camera state {cameraState.Zoom}");
+			// Debug.Log($"Camera state {cameraState.Zoom}");
 			accumTime += Time.deltaTime;
 			yield return null;
 			

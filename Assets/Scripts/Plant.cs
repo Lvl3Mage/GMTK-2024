@@ -12,68 +12,97 @@ public class Plant : MonoBehaviour
 	readonly HashSet<Vector2Int> growthPositions = new();
 	readonly HashSet<Vector2Int> plantPositions = new();
 	Vector2Int rootPosition;
+	bool plantDestroyed = false;
 	public void Create(HashSet<Vector2Int> positions, Vector2Int root)
 	{
 		growthPositions.UnionWith(positions);
 		WorldGrid.instance.AddGrowthPositions(growthPositions.ToArray());
 		rootPosition = root;
-		
-		
-		// AddPlantPosition(root);
 	}
 
-	public void Grow()
+	public HashSet<Vector2Int> Grow()
 	{
-		HashSet<Vector2Int> growthTargets = new HashSet<Vector2Int>();
-		growthTargets.Add(rootPosition);
+		HashSet<Vector2Int> growthTargets = new(){ rootPosition };
+		
 		foreach (Vector2Int plantPosition in plantPositions){
 			Vector2Int[] cellNeighbours = CellUtils.GetTrueCellNeighbours(plantPosition);
 			growthTargets.AddRange(cellNeighbours);
 		}
 		growthTargets.ExceptWith(plantPositions);
 		growthTargets.IntersectWith(growthPositions);
+
+		CleanGrowthTargets(growthTargets);
+		//Plant can destroy itself while growing
+		if (plantDestroyed){
+			return new HashSet<Vector2Int>();
+		}
+		
 		foreach (Vector2Int growthTarget in growthTargets){
-			Debug.Log($"Growing to {growthTarget}");
-			AddPlantPosition(growthTarget);
+			GrowTo(growthTarget);
+		}
+
+		return growthTargets;
+	}
+
+	void CleanGrowthTargets(HashSet<Vector2Int> growthTargets)
+	{
+		foreach (Vector2Int growthTarget in growthTargets){
+			Plant? otherPlant = WorldGrid.instance.GetPlantAt(growthTarget);
+			if(otherPlant != null && otherPlant != this){
+				Debug.Log($"Destroying at {growthTarget}");
+				PlantManager.instance.DestroyPlant(otherPlant);
+			}
 		}
 	}
-	void AddPlantPosition(Vector2Int position)
+	void GrowTo(Vector2Int position)
 	{
 		WorldGrid.instance.RegisterPlant(position, this);
 		plantPositions.Add(position);
-		Plant[] neighbours = GetPlantNeighbours(position);
-		foreach (Plant neighbour in neighbours){
-			neighbour.AddDependency(this);
-			AddDependency(neighbour);
+		Plant[] cellNeighbours = GetNeighboursAtCell(position);
+		foreach (Plant neighbour in cellNeighbours){
+			neighbour.AddNeighbour(this);
+			AddNeighbour(neighbour);
 		}
 		
 	}
-	readonly HashSet<Plant> dependencies = new HashSet<Plant>();
-	public void AddDependency(Plant plant)
+	readonly HashSet<Plant> neighbours = new();
+	public HashSet<Plant> GetNeighbours()
 	{
-		dependencies.Add(plant);
-		plant.OnDestroyed += RemoveDependency;
+		return new HashSet<Plant>(neighbours);
 	}
-	Plant[] GetPlantNeighbours(Vector2Int position)
+	
+	
+	void AddNeighbour(Plant plant)
+	{
+		neighbours.Add(plant);
+	}
+	void RemoveNeighbour(Plant plant)
+	{
+		neighbours.Remove(plant);
+	}
+	Plant[] GetNeighboursAtCell(Vector2Int position)
 	{
 		Vector2Int[] cellNeighbours = CellUtils.GetCellNeighbours(position);
 
 		return cellNeighbours.Select(neighbour => WorldGrid.instance.GetPlantAt(neighbour)).OfType<Plant>().ToArray();
 	}
-	void RemoveDependency(Plant plant)
-	{
-		dependencies.Remove(plant);
-	}
-	public delegate void PlantDeletionHandler(Plant plant);
-	public event PlantDeletionHandler OnDestroyed;
 	public void DestroyPlant()
 	{
-		OnDestroyed?.Invoke(this);
-		Destroy(gameObject);
+		if (plantDestroyed){
+			return;
+		}
+		plantDestroyed = true;
+		Plant[] neighboursArr = neighbours.ToArray();
+
+		for (int i = 0; i < neighboursArr.Length; i++){
+			Plant neighbour = neighboursArr[i];
+			neighbour.RemoveNeighbour(this);
+		}
+
 		foreach (Vector2Int plantPosition in plantPositions){
 			WorldGrid.instance.RemovePlantAt(plantPosition);
 		}
-		WorldGrid.instance.RemoveGrowthPositions(growthPositions.ToArray());
+		WorldGrid.instance.RemoveGrowthPositions(growthPositions);
+		Destroy(gameObject);
 	}
-	
 }

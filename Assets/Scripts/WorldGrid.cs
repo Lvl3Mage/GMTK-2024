@@ -100,12 +100,27 @@ public class WorldGrid : MonoBehaviour
                 Debug.LogWarning("Trying to register the same plant twice");
                 return;
             }
-            
-            plantLookUp[position].DestroyPlant();
         }
 
         plantLookUp.Add(position, plant);
         addedCells.Add(position);
+    }
+    
+
+    public HashSet<Plant> GetWaterNeighbouringPlants()
+    {
+        HashSet<Plant> waterPlants = new HashSet<Plant>();
+        
+        foreach(Vector2Int waterPosition in waterPositions)
+        {
+            Plant? plant = GetPlantAt(waterPosition);
+            if(plant != null)
+            {
+                waterPlants.Add(plant);
+            }
+        }
+
+        return waterPlants;
     }
 
     public void RemovePlantAt(Vector2Int position)
@@ -166,7 +181,7 @@ public class WorldGrid : MonoBehaviour
         }
     }
 
-    public void RemoveGrowthPositions(Vector2Int[] positions)
+    public void RemoveGrowthPositions(HashSet<Vector2Int> positions)
     {
         foreach (var position in positions)
         {
@@ -176,7 +191,6 @@ public class WorldGrid : MonoBehaviour
             }
         }
     }
-
     
     //Map Lookup
 
@@ -188,6 +202,8 @@ public class WorldGrid : MonoBehaviour
         }
         return MapCellType.Land;
     }
+    
+    
 
     public HashSet<Vector2Int> GetWaterCells() => new(waterPositions);
 

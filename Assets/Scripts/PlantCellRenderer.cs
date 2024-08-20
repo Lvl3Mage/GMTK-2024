@@ -20,7 +20,10 @@ public class PlantCellRenderer : MonoBehaviour
         tileRenderer.material.SetFloat("_TileIndex", 0);
     }
 
-
+    public bool IsRendering()
+    {
+        return tileIndex != 0;
+    }
 
     /// <summary>Modifies the whole cell edges. Each PlantRenderer makes its childs call it. </summary>
     /// <param name="quadrantData">An array that reprents the edges that are on collision with other cells</param>
@@ -87,11 +90,18 @@ public class PlantCellRenderer : MonoBehaviour
     }
     public void UpdateSprite()
     {
+        if (tileIndex == 0){
+            tileRenderer.enabled = false;
+            return;
+        }
+
+        tileRenderer.enabled = true;
         tileRenderer.material.SetFloat("_TileIndex", tileIndex);
         tileRenderer.material.SetColor("_TintBottomLeft", quadrantColors[0]);
         tileRenderer.material.SetColor("_TintBottomRight", quadrantColors[1]);
         tileRenderer.material.SetColor("_TintTopLeft", quadrantColors[2]);
         tileRenderer.material.SetColor("_TintTopRight", quadrantColors[3]);
+        
         
     }
 }

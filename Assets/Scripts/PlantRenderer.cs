@@ -26,7 +26,8 @@ public class PlantRenderer : MonoBehaviour
     
     Dictionary<Vector2Int, PlantCellRenderer> rendererGrid = new();
     HashSet<Vector2Int> filledCells = new();
-    HashSet<Vector2Int> pendingRendererUpdates = new();
+    HashSet<Vector2Int> pendingSpriteUpdates = new();
+    HashSet<Vector2Int> pendingShakeUpdates = new();
     Dictionary<Vector2Int,Color> filledCellColors = new();
 
 
@@ -49,22 +50,6 @@ public class PlantRenderer : MonoBehaviour
     public Vector3 GetWorldTilePosition(Vector2Int position)
     {
         return new Vector3(position.x, position.y, transform.position.z) + new Vector3(1,1,0) * 0.5f;
-    }
-    public class FillGroup
-    {
-        public FillGroup(HashSet<Vector2Int> positions, Color color)
-        {
-            this.positions = positions;
-            this.color = color;
-        }
-        public HashSet<Vector2Int> positions = new();
-        public Color color;
-    }
-    public void AddFilledCells(FillGroup[] fillGroups)
-    {
-        foreach (FillGroup fillGroup in fillGroups){
-            AddFilledCells(fillGroup.positions, fillGroup.color);
-        }
     }
     public void AddFilledCells(HashSet<Vector2Int> positionsToFill, Color color)
     {
@@ -89,14 +74,11 @@ public class PlantRenderer : MonoBehaviour
         HashSet<Vector2Int> affectedRendererPositions = new(fillPositions);
         foreach (Vector2Int updatedPosition in fillPositions){
             Vector2Int[] neighbours = CellUtils.GetCellQuadrant(updatedPosition - Vector2Int.one);
-            foreach (Vector2Int neighbour in neighbours){
-                // Debug.Log($"Adding neighbour {neighbour}");
-            }
             affectedRendererPositions.UnionWith(neighbours);
         }
         RefreshRendererData(affectedRendererPositions);
         
-        pendingRendererUpdates.UnionWith(affectedRendererPositions);
+        pendingSpriteUpdates.UnionWith(affectedRendererPositions);
     }
     void RefreshRendererData(HashSet<Vector2Int> affectedRenderers)
     {
@@ -122,7 +104,10 @@ public class PlantRenderer : MonoBehaviour
                     quadrantColors[i] = averageColor;
                 }
             }
-            
+
+            if (plantCellRenderer.IsRendering()){
+                pendingShakeUpdates.Add(affectedRenderer);
+            }
             plantCellRenderer.SetData(quadrantFillData, quadrantColors);
             
         }
@@ -145,15 +130,25 @@ public class PlantRenderer : MonoBehaviour
     //Animation
     public void InitiateShake()
     {
-        foreach (Vector2Int pendingRendererUpdate in pendingRendererUpdates){
+        foreach (Vector2Int pendingRendererUpdate in pendingSpriteUpdates){
             rendererGrid[pendingRendererUpdate].AnimateShake();
         }
+        pendingShakeUpdates.Clear();
+    }
+
+    public bool RequiresShake()
+    {
+        return pendingShakeUpdates.Count > 0;
     }
     public void InitiateSpriteChange()
     {
-        foreach (Vector2Int pendingRendererUpdate in pendingRendererUpdates){
+        foreach (Vector2Int pendingRendererUpdate in pendingSpriteUpdates){
             rendererGrid[pendingRendererUpdate].AnimateSpriteChange();
         }
-        pendingRendererUpdates.Clear();
+        pendingSpriteUpdates.Clear();
+    }
+    public bool RequiresSpriteChange()
+    {
+        return pendingSpriteUpdates.Count > 0;
     }
 }

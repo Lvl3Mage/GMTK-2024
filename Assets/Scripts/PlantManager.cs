@@ -7,8 +7,23 @@ using Lvl3Mage.EditorEnhancements.Runtime;
 using UnityEngine;
 
 public class PlantManager : MonoBehaviour
-{ 
-    List<Plant> plants = new();
+{
+
+    public static PlantManager instance { get; private set; }
+
+    void Awake()
+    {
+        if (instance != null)
+        {
+            Debug.LogWarning("Another instance of PlantManager exists!");
+            Destroy(gameObject);
+            return;
+        }
+
+        instance = this;
+    }
+
+    HashSet<Plant> managedPlants = new();
     [SerializeField] Plant plantPrefab;
     [SerializeField] float plantShakeTime = 1f;
     [SerializeField] float plantAnimationTime = 1f;
@@ -24,61 +39,88 @@ public class PlantManager : MonoBehaviour
         position.z = transform.position.z;
         Plant newPlant = Instantiate(plantPrefab, position, Quaternion.identity);
         newPlant.Create(positions, rootPosition);
-        plants.Add(newPlant);
-        Debug.Log($"Plant created at root position {rootPosition}, plant count {plants.Count}");
-        newPlant.OnDestroyed += RemovePlant;
+        managedPlants.Add(newPlant);
+    }
+    void DestroyDisconnectedPlants()
+    {
+        HashSet<Plant> connectedPlants = PlantDFS(WorldGrid.instance.GetWaterNeighbouringPlants());
+        HashSet<Plant> disconnectedPlants = new(managedPlants);
+        disconnectedPlants.ExceptWith(connectedPlants);
+        foreach (Plant plant in disconnectedPlants)
+        {
+            managedPlants.Remove(plant);
+            plant.DestroyPlant();
+        }
     }
 
-    void RemovePlant(Plant plant)
+    static HashSet<Plant> PlantDFS(HashSet<Plant> sourcePlants)
     {
-        plants.Remove(plant);
-        Debug.Log($"Plant removed from root position {plant.transform.position}");
-    }
-
-
-    public IEnumerator UpdatePlants()
-    {
-        for (int index = plants.Count-1; index >= 0; index--){
-            Plant plant = plants[index];
-            plant.Grow();
+        HashSet<Plant> connectedPlants = new(sourcePlants);
+        Queue<Plant> plantQueue = new Queue<Plant>(connectedPlants);
+        
+        while(plantQueue.Count > 0)
+        {
+            Plant plant = plantQueue.Dequeue();
+            HashSet<Plant> neighbours = plant.GetNeighbours();
+            neighbours.ExceptWith(connectedPlants);
+            
+            foreach(Plant neighbour in neighbours){
+                connectedPlants.Add(neighbour);
+                plantQueue.Enqueue(neighbour);
+            }
         }
 
-        HashSet<Vector2Int> plantAdditions = WorldGrid.instance.GetPlantAdditions();
+        return connectedPlants;
+        
+    }
+    public void DestroyPlant(Plant plant)
+    {
+        Debug.Log("Destroying plant");
+        managedPlants.Remove(plant);
+        plant.DestroyPlant();
+        DestroyDisconnectedPlants();
+        Debug.Log($"Plant cleanup plants remaining {managedPlants.Count}");
+        
+    }
+
+    IEnumerator UpdatePlant(Plant plant)
+    {
+        HashSet<Vector2Int> plantGrowth = plant.Grow();
         HashSet<Vector2Int> plantRemovals = WorldGrid.instance.GetPlantRemovals();
         WorldGrid.instance.ClearPlantChanges();
         
-        Dictionary<Plant, HashSet<Vector2Int>> plantGroups = new();
-        foreach (Vector2Int addition in plantAdditions){
-            Plant? plant = WorldGrid.instance.GetPlantAt(addition);
-            if (plant == null){
-                Debug.LogWarning("Plant not found at addition position");
-                continue;
-            }
-            if (!plantGroups.ContainsKey(plant)){
-                plantGroups[plant] = new HashSet<Vector2Int>();
-            }
-            plantGroups[plant].Add(addition);
-        }
-        PlantRenderer.FillGroup[] fillGroups = new PlantRenderer.FillGroup[plantGroups.Count];
-        int i = 0;
-        foreach (KeyValuePair<Plant, HashSet<Vector2Int>> plantGroup in plantGroups){
-            fillGroups[i] = new PlantRenderer.FillGroup(plantGroup.Value, plantGroup.Key.PlantColor);
-            i++;
-        }
+        
         PlantRenderer.instance.RemoveFilledCells(plantRemovals);
-        PlantRenderer.instance.AddFilledCells(fillGroups);
-        
-        PlantRenderer.instance.InitiateShake();
-        yield return new WaitForSeconds(plantShakeTime);
-        
-        PlantRenderer.instance.InitiateSpriteChange();
-        yield return new WaitForSeconds(plantAnimationTime);
-        
+        PlantRenderer.instance.AddFilledCells(plantGrowth, plant.PlantColor);
+
+        if (PlantRenderer.instance.RequiresShake()){
+            PlantRenderer.instance.InitiateShake();
+            yield return new WaitForSeconds(plantShakeTime);
+            
+        }
+
+        if (PlantRenderer.instance.RequiresSpriteChange()){
+            PlantRenderer.instance.InitiateSpriteChange();
+            yield return new WaitForSeconds(plantAnimationTime);
+        }
+    }
+    public IEnumerator UpdatePlants()
+    {
+        HashSet<Plant> plantsToUpdate = new(managedPlants);
+        while(plantsToUpdate.Count > 0)
+        {
+            Plant plant = plantsToUpdate.First();
+            if (managedPlants.Contains(plant)){
+                yield return UpdatePlant(plant);
+            }
+            plantsToUpdate.Remove(plant);
+            
+        }
     }
 
     public int GetPlantCount()
     {
-        return plants.Count;
+        return managedPlants.Count;
     }
 }
 
