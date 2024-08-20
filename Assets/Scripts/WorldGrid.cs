@@ -208,8 +208,7 @@ public class WorldGrid : MonoBehaviour
     /// </param>
 
     public void AddGrowthPositions(Vector2Int[] positions)
-    {   
-        
+    {
         foreach (var position in positions)
         {
             if (!growthLookUp.ContainsKey(position))
@@ -231,7 +230,7 @@ public class WorldGrid : MonoBehaviour
         {
             if (growthLookUp.ContainsKey(position))
             {
-                growthLookUp.Remove(position);
+                growthLookUp[position]--;
             }
         }
     }
