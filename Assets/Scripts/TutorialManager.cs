@@ -2,12 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using UnityEngine.SceneManagement;
 public class TutorialManager : MonoBehaviour
 {
 	[SerializeField] PlantCreator plantCreator;
 	void OnTutorialComplete(){
-		// PlayerPrefs.SetInt("tutorialComplete",1);
-		// PlayerPrefs.Save();
+		SceneManager.LoadScene("MainMenu");
 	}
 	Coroutine TutorialProcess;
 	void Start()
@@ -68,9 +68,9 @@ public class TutorialManager : MonoBehaviour
 		PlantManager.instance.OnPlantDestroyed += () => plantCollision = true;
 		notifs.AddNotification("Alright one last thing. Be careful where you grow you plants! If they intersect both plants will die. If a plant loses access to water it will also die.", () => plantCollision);
 		yield return new WaitUntil(() => plantCollision);
-		
-		
-		
+
+
+		print("LOL");
 		OnTutorialComplete();
 	}
 }

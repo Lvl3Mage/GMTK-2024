@@ -105,7 +105,6 @@ class PlantSelector : MonoBehaviour
         offsetsToCheck.Add(Vector2Int.zero);
         while (offsetsToCheck.Count > 0 && offsets.Count < targetSize){
             int index = Random.Range(0, offsetsToCheck.Count);
-            Debug.Log("Index: " + index);
             Vector2Int offset = offsetsToCheck[index];
             offsetsToCheck.RemoveAt(index);
             offsetsToCheck.Remove(offset);
@@ -136,9 +135,7 @@ class PlantSelector : MonoBehaviour
             for (int j = 0; j < gridSize.y; j++){
                 Vector2Int cell = new(i, j);
                 cell -= gridSize / 2;
-                Debug.Log("Checking cell " + cell);
                 if (WorldGrid.instance.CellTargetable(cell) && !WorldGrid.instance.GetGrowthAt(cell)){
-                    Debug.Log("Cell is open");
                     openCells.Add(cell);
                 }
             }
