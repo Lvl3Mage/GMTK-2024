@@ -41,7 +41,6 @@ public class levelLoader : MonoBehaviour
 
     public void exit()
     {
-        print("LOL");
         Application.Quit();
     }
 
