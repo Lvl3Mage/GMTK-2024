@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Lvl3Mage.CameraManagement2D;
+using TMPro;
+
 public class GameManager : MonoBehaviour
 {
     [SerializeField] CameraModuleManager cameraModuleManager;
@@ -16,25 +18,45 @@ public class GameManager : MonoBehaviour
     [SerializeField] Vector2Int gridSize;
     [SerializeField] Vector2Int gridExpandAmount;
 
-    int level = 0;
+    [SerializeField] MapRenderer map;
+    [SerializeField] TextMeshProUGUI text;
+
+    int level = 5;
+    int scaleLevel = 10;
     [SerializeField] float minZoom;
     void Start()
     {
         Bounds bounds = WorldGrid.instance.InitializeBounds(gridSize);
         cameraPanModule.SetClamp(cameraGridController.GetCameraClamp(bounds));
         StartCoroutine(RunGame());
+
+        map.FillBounds();
+        StartCoroutine(map.renderWorldGrid());
     }
 
-    bool LevelComplete(int level)
+    private void Update()
     {
-        return plantManager.GetPlantCount() > level;
+        text.text = (level - plantManager.GetPlantCount() + 1).ToString();
+    }
+
+    bool LevelComplete(int currentlevel)
+    {
+        if(plantManager.GetPlantCount() > currentlevel)
+        {
+            level = scaleLevel;
+            scaleLevel *= 2;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     IEnumerator RunGame()
     {
         while (true){
             yield return RunLevel();
-            level++;
             yield return ExpandGrid(gridExpandAmount);
         }
     }
@@ -51,17 +73,18 @@ public class GameManager : MonoBehaviour
             HashSet<Vector2Int> plantPositions = plantCreator.GetPlantPositions();
             Vector2Int rootPosition = plantCreator.GetRootPosition();
             plantManager.SpawnPlant(plantPositions, rootPosition);
-            yield return plantManager.UpdatePlants();
-            
+            yield return plantManager.UpdatePlants();   
         }
         
     }
     IEnumerator ExpandGrid(Vector2Int amount)
     {
+        SoundController.instance.PlayGong();
+
+        SoundController.instance.PlayRope();
         gridSize += amount;
-        //Todo hook in the grid cell generation here with the new grid size @Alon/@Joao
-        
-        
+
+
         Bounds newBounds = WorldGrid.instance.ExpandGridBounds(amount);
         cameraPanModule.SetClamp(cameraGridController.GetCameraClamp(newBounds));
         cameraModuleManager.SwitchToController(1);
@@ -69,7 +92,15 @@ public class GameManager : MonoBehaviour
         //Todo camera controller should expand to grid bounds
         cameraPanModule.AdaptToState(cameraGridController.GetCameraState());
         cameraModuleManager.SwitchToController(0);
+        
+        
+        map.FillBounds();
+        StartCoroutine(map.renderWorldGrid());
+
     }
+
+
+
     public static GameManager instance { get; private set; }
     public void Awake()
     {

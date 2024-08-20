@@ -221,8 +221,8 @@ ParticleSystemForceField:
   m_Enabled: 1
   m_Parameters:
     m_Shape: 3
-    m_StartRange: 493.17743
-    m_EndRange: 617.36346
+    m_StartRange: 649.9
+    m_EndRange: 953.1
     m_Length: 1
     m_GravityFocus: 0
     m_RotationRandomness: {x: 0, y: 0}
@@ -388,7 +388,7 @@ ParticleSystemForceField:
     m_GravityCurve:
       serializedVersion: 2
       minMaxState: 0
-      scalar: -10
+      scalar: -4
       minScalar: 1
       maxCurve:
         serializedVersion: 2
@@ -799,7 +799,7 @@ Animator:
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: b660ca042e329a143a8e1ef9ea382c77, type: 2}
   m_CullingMode: 0
-  m_UpdateMode: 0
+  m_UpdateMode: 2
   m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_StabilizeFeet: 0
@@ -833,6 +833,7 @@ GameObject:
   - component: {fileID: 4020061599950958467}
   - component: {fileID: 4020061599950958466}
   - component: {fileID: 4020061599950958477}
+  - component: {fileID: 7575380}
   m_Layer: 5
   m_Name: Transition
   m_TagString: Untagged
@@ -923,3 +924,15 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!225 &7575380
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4020061599950958476}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 0
+  m_BlocksRaycasts: 0
+  m_IgnoreParentGroups: 0

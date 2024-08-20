@@ -5,11 +5,12 @@ using UnityEngine.Tilemaps;
 
 public class MapRenderer : MonoBehaviour
 {
-    [SerializeField]Tilemap tileMap;
+    [SerializeField] Tilemap tileMap;
     [SerializeField] Tile[] land;
     [SerializeField] AnimatedTile water;
 
-    Dictionary<Vector2Int, MapCellType> mapData = new();
+    readonly Dictionary<Vector2Int, MapCellType> mapData = new();
+    readonly HashSet<Vector2Int> newTiles = new(); // Para almacenar las posiciones nuevas
 
     private void Start()
     {
@@ -17,28 +18,32 @@ public class MapRenderer : MonoBehaviour
 
     public void FillBounds()
     {
-        Vector2Int gridSize = new Vector2Int(5, 3);//WorldGrid.instance.GridSize; //Always odd sizes
+        Vector2Int gridSize = WorldGrid.instance.GridSize;
         HashSet<Vector2Int> waterCells = WorldGrid.instance.GetWaterCells();
         Vector2Int origin = gridSize / 2;
 
+        newTiles.Clear(); // Limpiar la lista de nuevos tiles
+
+        // Iterar sobre cada posición en la cuadrícula
         for (int row = -origin.y; row <= gridSize.y / 2; row++)
+        {
             for (int col = -origin.x; col <= gridSize.x / 2; col++)
             {
                 Vector2Int coord = new(col, row);
-                print(coord);
-                MapCellType cellType;
 
-                if (waterCells.Contains(coord))
+                if (mapData.ContainsKey(coord))
                 {
-                    cellType = MapCellType.Water;
+                    continue;
                 }
-                else cellType = MapCellType.Land;
 
+                MapCellType cellType = waterCells.Contains(coord) ? MapCellType.Water : MapCellType.Land;
                 mapData.Add(coord, cellType);
+                newTiles.Add(coord); // Añadir la posición a los nuevos tiles
             }
+        }
     }
 
-    public void renderWorldGrid()
+    public IEnumerator renderWorldGrid(float animationDuration = 0.5f)
     {
         foreach (var pair in mapData)
         {
@@ -48,16 +53,67 @@ public class MapRenderer : MonoBehaviour
             switch (type)
             {
                 case MapCellType.Land:
-                    tileMap.SetTile(position, land[Random.Range(0, land.Length)]);
+                    if (Random.value < 0.01f)  // 1% de probabilidad
+                    {
+                        type = MapCellType.Water;
+                        tileMap.SetTile(position, water);
+                        tileMap.SetAnimationFrame(position, Random.Range(1, water.m_AnimatedSprites.Length + 1));
+                        WorldGrid.instance.waterPositions.Add(pair.Key); // Añadir la posición a waterPositions
+                    }
+                    else
+                    {
+                        tileMap.SetTile(position, land[Random.Range(0, land.Length)]);
+                    }
                     break;
+
                 case MapCellType.Water:
                     tileMap.SetTile(position, water);
                     tileMap.SetAnimationFrame(position, Random.Range(1, water.m_AnimatedSprites.Length + 1));
                     break;
+
                 default:
                     tileMap.SetTile(position, land[0]);
                     break;
             }
+
+            if(!mapData.ContainsKey((Vector2Int)position))
+            {
+                tileMap.SetTransformMatrix(position, Matrix4x4.TRS(Vector3.zero, Quaternion.identity, Vector3.zero));
+            }
+        }
+
+        // Animación de 0 -> 1 (escala) solo para los nuevos tiles
+
+        float elapsedTime = 0f;
+        while (elapsedTime < animationDuration)
+        {
+            elapsedTime += Time.deltaTime;
+            float scale = Mathf.Lerp(0, 1, elapsedTime / animationDuration);
+            
+            foreach (Vector2Int coord in newTiles)
+            {
+                Vector3Int position = new Vector3Int(coord.x, coord.y, 0);
+                tileMap.SetTransformMatrix(position, Matrix4x4.TRS(Vector3.zero, Quaternion.identity, new Vector3(scale, scale, 1)));
+            }
+
+            yield return null; 
+        }
+
+        // Resetear la escala al final de la animación
+        foreach (Vector2Int coord in newTiles)
+        {
+            Vector3Int position = new Vector3Int(coord.x, coord.y, 0);
+            tileMap.SetTransformMatrix(position, Matrix4x4.identity);
+        }
+
+        newTiles.Clear(); 
+    }
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        foreach(var pair in mapData)
+        {
+            Gizmos.DrawSphere((Vector2)pair.Key, 0.5f);
         }
     }
 }

@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class SoundController : MonoBehaviour
 {
+    public static SoundController instance { get; private set; }
+
     [Header("--------- Arrays Of Sounds ---------")]
     public AudioClip[] ambientSounds;
     public AudioClip[] effectSounds;
@@ -10,6 +12,8 @@ public class SoundController : MonoBehaviour
     [Header("--------- Audio Clip ---------")]
     public AudioClip background;
     public AudioClip dog;
+    public AudioClip gong;
+    public AudioClip rope;
 
     [Header("--------- Audio Source ---------")]
     public AudioSource sfxSource;
@@ -26,6 +30,14 @@ public class SoundController : MonoBehaviour
         {
             musicSource = gameObject.AddComponent<AudioSource>();
         }
+
+        if (instance != null)
+        {
+            Debug.LogWarning("Another instance of WorldGrid exists! Destroying this one .");
+            Destroy(gameObject);
+            return;
+        }
+        instance = this;
 
         // Evita que este objeto se destruya al cambiar de escena
         DontDestroyOnLoad(gameObject);
@@ -54,6 +66,16 @@ public class SoundController : MonoBehaviour
     public void PlayDog()
     {
         sfxSource.PlayOneShot(dog);
+    }
+
+    public void PlayGong()
+    {
+        sfxSource.PlayOneShot(gong);
+    }
+
+    public void PlayRope()
+    {
+        sfxSource.PlayOneShot(rope);
     }
 
     // Método genérico para reproducir un sonido aleatorio de cualquier array
