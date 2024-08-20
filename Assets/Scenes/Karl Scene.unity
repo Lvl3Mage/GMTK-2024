@@ -1848,10 +1848,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 378f7f90cd5d4e3298d0f3ec08f9da30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  AveragePlantSize: 5
-  PlantMinSize: 3
-  PlantMaxSize: 10
+  belowSizeOffset: 3
+  aboveSizeOffset: 9
+  sparedCellsMargin: 5
   RNGManipulation: 0.5
+  gameManager: {fileID: 1327722751}
 --- !u!4 &2046656694
 Transform:
   m_ObjectHideFlags: 0

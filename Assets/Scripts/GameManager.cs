@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(map.renderWorldGrid());
     }
 
-    int GetPlantRequirement(int currentStage)
+    public int GetPlantRequirement(int currentStage)
     {
         if(currentStage < stagePlantRequirements.Length){
             return stagePlantRequirements[currentStage];
@@ -73,6 +73,8 @@ public class GameManager : MonoBehaviour
     {
         return plantManager.GetPlantCount() >= GetPlantRequirement(currentStage);
     }
+
+    public int GetCurrentGoal() => GetPlantRequirement(stage);
 
     IEnumerator RunGame()
     {
