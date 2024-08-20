@@ -49,7 +49,7 @@ public class PlantCellRenderer : MonoBehaviour
             animator.Play("Spawn");
         }
         else if (tileIndex == 0){
-            animator.Play("Destroy"); 
+            animator.Play("Destroy");
         }
         else{
             animator.Play("Update");
