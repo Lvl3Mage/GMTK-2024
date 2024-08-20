@@ -632,6 +632,7 @@ MonoBehaviour:
   control1Pos: 0
   control2Pos: 1
   expandDuration: 2
+  minZoom: 4
 --- !u!1 &595076000
 GameObject:
   m_ObjectHideFlags: 0

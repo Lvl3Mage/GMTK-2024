@@ -66,7 +66,7 @@ public class TutorialManager : MonoBehaviour
 		
 		bool plantCollision = false;
 		PlantManager.instance.OnPlantDestroyed += () => plantCollision = true;
-		notifs.AddNotification("Alright one last thing. Be careful where you grow you plants! If they intersect both plants will die. If a plant loses access to water it will also die.", () => plantCollision);
+		notifs.AddNotification("Alright one last thing. Be careful where you grow you plants! If they intersect both plants will die. If a plant loses access to water it will also die. Give it a shot!", () => plantCollision);
 		yield return new WaitUntil(() => plantCollision);
 
 		notifs.AddNotification("Now expand your garden as much as possible!", () => true);

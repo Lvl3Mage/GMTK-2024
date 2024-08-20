@@ -14,6 +14,7 @@ public class CameraGridController : CameraController
     [SerializeField] float control1Pos = 0.3333f;
     [SerializeField] float control2Pos = 0.6666f;
     [SerializeField] float expandDuration = 2;
+    [SerializeField] float minZoom = 3;
 
     public CameraState GetMaxGridState(Bounds gridBounds)
 	{
@@ -71,7 +72,7 @@ public class CameraGridController : CameraController
 		CameraStateClamp clamp =
 			CameraStateClamp.CoveringBounds(bounds, controllerCamera.aspect, CameraStateClamp.ClampMode.ClampBounds);
 		//Todo fix package
-		clamp.zoomClamp = new Vector2(4, Mathf.Max(bounds.size.x, bounds.size.y));
+		clamp.zoomClamp = new Vector2(minZoom, Mathf.Max(bounds.size.x, bounds.size.y));
 		clamp.clampZoom = true;
 		return clamp;
 	}
