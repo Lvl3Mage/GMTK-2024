@@ -1170,7 +1170,7 @@ MonoBehaviour:
   gridExpandAmount: {x: 2, y: 1}
   map: {fileID: 1671643597}
   plantRequirementDisplay: {fileID: 1711380128}
-  stagePlantRequirements: 03000000080000000d0000001400000028000000
+  stagePlantRequirements: 0300000008000000190000002800000041000000
   requirementsPerAddedArea: 0.2
   finalStage: 3
 --- !u!4 &1327722752
@@ -1852,7 +1852,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   belowSizeOffset: 4
   aboveSizeOffset: 1
-  sparedCellsMargin: 20
+  sparedCellsMargin: 15
   minPlantSize: 3
   maxSize: 0
   RNGManipulation: 1
