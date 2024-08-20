@@ -101,6 +101,7 @@ public class PlantManager : MonoBehaviour
         if (PlantRenderer.instance.RequiresShake()){
             PlantRenderer.instance.InitiateShake();
             yield return new WaitForSeconds(plantShakeTime);
+            SoundController.instance.PlayMusicKeys();
             
         }
 

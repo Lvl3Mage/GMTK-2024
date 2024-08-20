@@ -92,6 +92,8 @@ public class WorldGrid : MonoBehaviour
     /// </summary>
     void Awake()
     {
+        //SoundController.instance.PlayGameplayMusic();
+
         if (instance != null)
         {
             Debug.LogWarning("Another instance of WorldGrid exists! Destroying this one ."); // si existiese otro WorldGrid se autodestruiria
