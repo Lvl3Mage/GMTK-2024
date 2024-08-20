@@ -20,12 +20,17 @@ public class PlantCellRenderer : MonoBehaviour
     void Awake()
     {
         tileRenderer.material.SetFloat("_TileIndex", 0);
-        particles = GetComponent<ParticleSystem>();
+        particles = GetComponentInChildren<ParticleSystem>();
     }
 
     public bool IsRendering()
     {
         return tileIndex != 0;
+    }
+
+    public void AnimationComplete()
+    {
+        particles.Play();
     }
 
     /// <summary>Modifies the whole cell edges. Each PlantRenderer makes its childs call it. </summary>
@@ -47,15 +52,14 @@ public class PlantCellRenderer : MonoBehaviour
         }
         if (pastTileIndex == 0){
             animator.Play("Spawn");
-            particles.Play();
         }
         else if (tileIndex == 0){
             animator.Play("Destroy");
-            particles.Play();
+            
         }
         else{
             animator.Play("Update");
-            particles.Play();
+            
         }
     }
     /// <summary>Plays the "Shake" animation in the animator. </summary>
@@ -97,6 +101,7 @@ public class PlantCellRenderer : MonoBehaviour
     public void UpdateSprite()
     {
         if (tileIndex == 0){
+            
             tileRenderer.enabled = false;
             return;
         }

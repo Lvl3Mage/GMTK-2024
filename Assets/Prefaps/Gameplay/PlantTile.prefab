@@ -175,7 +175,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1444810799913484735, guid: ea4c2e9d5be2c2f469222d820b870210, type: 3}
       propertyPath: startDelay.scalar
-      value: 3.8
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1444810799913484735, guid: ea4c2e9d5be2c2f469222d820b870210, type: 3}
       propertyPath: EmissionModule.m_BurstCount

@@ -1169,8 +1169,8 @@ MonoBehaviour:
   gridExpandAmount: {x: 2, y: 1}
   map: {fileID: 1671643597}
   plantRequirementDisplay: {fileID: 1711380128}
-  stagePlantRequirements: 03000000080000000f000000
-  requirementsPerAddedArea: 0
+  stagePlantRequirements: 03000000080000000d0000001400000028000000
+  requirementsPerAddedArea: 0.2
   finalStage: 3
 --- !u!4 &1327722752
 Transform:
