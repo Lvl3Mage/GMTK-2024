@@ -19,8 +19,6 @@ class PlantSelector : MonoBehaviour
     [SerializeField] int sparedCellsMargin = 5;
     [SerializeField] int minPlantSize = 3;
     [Range(0, 1)][SerializeField] float RNGManipulation = 0.5f;
-    [SerializeField] GameManager gameManager;
-    [SerializeField] PlantManager plantManager;
     int targetPlantSize = 6;
     int currentTax = 0;
 
@@ -37,7 +35,7 @@ class PlantSelector : MonoBehaviour
         HashSet<Vector2Int> plantPositions = new() { Vector2Int.zero }; //Origin position by default
         //Calculate average plant size on current stage
         int freeCells = WorldGrid.instance.GetFreeCellAmount();
-        targetPlantSize = (freeCells - sparedCellsMargin) / (gameManager.GetCurrentGoal() - plantManager.GetPlantCount());
+        targetPlantSize = (freeCells - sparedCellsMargin) / (GameManager.instance.GetCurrentGoal() - PlantManager.instance.GetPlantCount());
         //Randomness manipulation
         int min = (int)(targetPlantSize - belowSizeOffset - currentTax * RNGManipulation);
         int max = (int)(targetPlantSize + aboveSizeOffset + 1 - currentTax * RNGManipulation);
@@ -69,6 +67,64 @@ class PlantSelector : MonoBehaviour
         return globalPositions;
     }
 
+    HashSet<Vector2Int> GenerateShapeWithSize(int size)
+    {
+        const int sampleCount = 6;
+        HashSet<Vector2Int> possibleStartingPositions = GetOpenCells();
+        HashSet<Vector2Int> startingPositions = new();
+        for (int i = 0; i < sampleCount; i++){
+            if (possibleStartingPositions.Count == 0){
+                break;
+            }
+            startingPositions.Add(possibleStartingPositions.ElementAt(UnityEngine.Random.Range(0, possibleStartingPositions.Count)));
+        }
+        if (startingPositions.Count == 0){
+            //Todo random shape cuz we are fucked
+            return new HashSet<Vector2Int>{Vector2Int.zero};
+        }
+        
+        
+        
+    }
+
+    HashSet<Vector2Int> GenerateValidShapeFromOffsets(Vector2Int position, int targetSize)
+    {
+        HashSet<Vector2Int> offsets = new(){ Vector2Int.zero };
+        Queue<Vector2Int> queue = new();
+        queue.Enqueue(Vector2Int.zero);
+        while (queue.Count > 0 && offsets.Count < targetSize){
+            Vector2Int offset = queue.Dequeue();
+            if (offsets.Contains(offset)){
+                continue;
+            }
+            Vector2Int worldPos = offset + position;
+            
+            if (WorldGrid.instance.CellTargetable(worldPos) && !WorldGrid.instance.GetGrowthAt(worldPos)){
+                queue.Enqueue(offset);
+                offsets.Add(offset);
+            }
+        }
+
+        return offsets;
+    }
+    
+    
+    HashSet<Vector2Int> GetOpenCells()
+    {
+        Vector2Int gridSize = WorldGrid.instance.GridSize;
+        HashSet<Vector2Int> openCells = new();
+        for (int i = 0; i < gridSize.x; i++){
+            for (int j = 0; j < gridSize.y; j++){
+                Vector2Int cell = new(i, j);
+                cell -= gridSize / 2;
+                if (WorldGrid.instance.CellTargetable(cell) && !WorldGrid.instance.GetGrowthAt(cell)){
+                    openCells.Add(cell);
+                }
+            }
+        }
+
+        return openCells;
+    }
     private Vector2Int GetRandAdjacent(Vector2Int cell, HashSet<Vector2Int> blackList = null)
     {
         Vector2Int[] adjacentPositions = new Vector2Int[]
