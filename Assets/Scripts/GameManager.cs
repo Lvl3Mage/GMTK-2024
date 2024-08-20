@@ -141,4 +141,11 @@ public class GameManager : MonoBehaviour
 
         instance = this;
     }
+    
+    bool uiVisible = false;
+    public void ToggleUI(bool val)
+    {
+        uiVisible = val;
+    }
+    public bool IsUIVisible() => uiVisible;
 }

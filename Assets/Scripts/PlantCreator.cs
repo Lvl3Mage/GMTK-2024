@@ -80,6 +80,7 @@ public class PlantCreator : MonoBehaviour
     }
 	void UpdateSpawner()
     {
+        if(GameManager.instance.IsUIVisible()){return;}
 	    int currentRotationAmount = rotationAmount;
 	    if (Input.GetKey(KeyCode.LeftShift)){
 			currentRotationAmount += (int)Input.mouseScrollDelta.y;
@@ -110,6 +111,7 @@ public class PlantCreator : MonoBehaviour
 
 	void UpdateRootSelect()
 	{
+        if(GameManager.instance.IsUIVisible()){return;}
 		Vector2Int currentRootPosition = WorldToGrid(SceneCamera.GetWorldMousePosition());
 		if(currentRootPosition == targetRootPosition)
 		{

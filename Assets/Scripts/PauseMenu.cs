@@ -50,6 +50,7 @@ public class PauseMenu : MonoBehaviour
         defaultTimeScale = Time.timeScale;
         Time.fixedDeltaTime = 0f;
         Time.timeScale = 0f;
+        GameManager.instance.ToggleUI(true);
     }
 
     public void ResumeGame()
@@ -60,5 +61,7 @@ public class PauseMenu : MonoBehaviour
         //ResumeEffects:
         Time.fixedDeltaTime = defaultFixedDelta;
         Time.timeScale = defaultTimeScale;
+        
+        GameManager.instance.ToggleUI(false);
     }
 }
