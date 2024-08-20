@@ -34,14 +34,15 @@ class PlantSelector : MonoBehaviour
     {
         HashSet<Vector2Int> plantPositions = new() { Vector2Int.zero }; //Origin position by default
         //Calculate average plant size on current stage
-        int cellTotal = WorldGrid.instance.GridSize.x * WorldGrid.instance.GridSize.y;
-        targetPlantSize = cellTotal / gameManager.GetCurrentGoal() - sparedCellsMargin;
-
+        int freeCells = WorldGrid.instance.GetFreeCellAmount();
+        targetPlantSize = (freeCells - sparedCellsMargin) / gameManager.GetCurrentGoal();
+        print("TargetSize: " + targetPlantSize.ToString());
         //Randomness manipulation
         int min = (int)(targetPlantSize - belowSizeOffset - currentTax * RNGManipulation);
         int max = (int)(targetPlantSize + aboveSizeOffset + 1 - currentTax * RNGManipulation);
+        print(new Vector2Int(min, max));
         int plantSize = UnityEngine.Random.Range(min, max);
-        plantSize = Math.Clamp(plantSize, belowSizeOffset, aboveSizeOffset);
+        plantSize = Math.Clamp(plantSize, targetPlantSize - belowSizeOffset, targetPlantSize + aboveSizeOffset);
         currentTax -= targetPlantSize - plantSize;
         
         while(plantPositions.Count < plantSize)

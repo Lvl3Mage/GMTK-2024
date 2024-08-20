@@ -508,7 +508,7 @@ Camera:
   far clip plane: 1000
   field of view: 34
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 1
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -628,7 +628,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   active: 0
-  cameraBoundsPadding: 5
+  cameraBoundsPadding: 1
   control1Pos: 0
   control2Pos: 1
   expandDuration: 2
@@ -1165,11 +1165,11 @@ MonoBehaviour:
   plantManager: {fileID: 1668031027}
   plantCreator: {fileID: 2025994124}
   plantSelector: {fileID: 2046656693}
-  gridSize: {x: 5, y: 2}
-  gridExpandAmount: {x: 4, y: 2}
+  gridSize: {x: 2, y: 2}
+  gridExpandAmount: {x: 2, y: 2}
   map: {fileID: 1671643597}
   plantRequirementDisplay: {fileID: 1711380128}
-  stagePlantRequirements: 050000000a0000000f000000
+  stagePlantRequirements: 03000000080000000f000000
   requirementsPerAddedArea: 0
 --- !u!4 &1327722752
 Transform:
@@ -1848,10 +1848,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 378f7f90cd5d4e3298d0f3ec08f9da30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  belowSizeOffset: 3
-  aboveSizeOffset: 9
-  sparedCellsMargin: 5
-  RNGManipulation: 0.5
+  belowSizeOffset: 0
+  aboveSizeOffset: 0
+  sparedCellsMargin: 1
+  RNGManipulation: 1
   gameManager: {fileID: 1327722751}
 --- !u!4 &2046656694
 Transform:

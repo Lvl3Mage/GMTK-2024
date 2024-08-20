@@ -55,6 +55,15 @@ public class WorldGrid : MonoBehaviour
 
     [SerializeField] Vector2Int[] initialWaterPosition;
 
+    public int GetFreeCellAmount()
+    {
+        int totalCells = GridSize.x * GridSize.y;
+        int obstructedCells = growthLookUp.Count + waterPositions.Count;
+        int freeCells = totalCells - obstructedCells;
+
+        return freeCells;
+    }
+
     void OnDrawGizmos()
     {
         foreach (var plant in plantLookUp)
@@ -101,7 +110,6 @@ public class WorldGrid : MonoBehaviour
         instance = this;
 
         waterPositions.UnionWith(initialWaterPosition);
-        Debug.Log(waterPositions.Count);
     }
 
     public void RegisterPlant(Vector2Int position, Plant plant)
