@@ -45,7 +45,7 @@ public class MapRenderer : MonoBehaviour
 
                 MapCellType cellType = MapCellType.Land;
 
-                if (Random.value < 0.07f)  // 1% de probabilidad
+                if (Random.value < 0.01f)  // 1% de probabilidad
                 {
                     cellType = MapCellType.Water;
                     WorldGrid.instance.AddWaterPosition(coord);

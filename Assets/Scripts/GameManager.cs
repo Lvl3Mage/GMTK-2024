@@ -58,7 +58,11 @@ public class GameManager : MonoBehaviour
     }
     void Update()
     {
-        plantRequirementDisplay.Set(GetPlantRequirement(stage));
+
+        string currentPlants = plantManager.GetPlantCount().ToString();
+        string neededPlants = GetPlantRequirement(stage).ToString();
+
+        plantRequirementDisplay.Set(currentPlants + "/" + neededPlants);
         if (Input.GetKey(KeyCode.LeftShift))
         {
             cameraModuleManager.UseUserInput(false);
@@ -67,6 +71,7 @@ public class GameManager : MonoBehaviour
             cameraModuleManager.UseUserInput(true);
             
         }
+
     }
 
     bool IsStageComplete(int currentStage)
