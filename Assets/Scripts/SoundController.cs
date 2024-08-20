@@ -17,6 +17,7 @@ public class SoundController : MonoBehaviour
     public AudioClip gong;
     public AudioClip rope;
     public AudioClip destroyingBush;
+    public AudioClip puttingSeed;
 
     [Header("--------- Audio Source ---------")]
     public AudioSource sfxSource;
@@ -94,6 +95,11 @@ public class SoundController : MonoBehaviour
         musicSource.clip = gamePlayMusic;
         musicSource.loop = true;
         musicSource.Play();
+    }
+
+    public void PlaySeed()
+    {
+        sfxSource.PlayOneShot(puttingSeed);
     }
 
     public void PlayDestoyingBush()

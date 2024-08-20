@@ -339,6 +339,7 @@ MonoBehaviour:
   gong: {fileID: 8300000, guid: bacf75c026a3fe945bd043685d6d7e74, type: 3}
   rope: {fileID: 8300000, guid: f3a036c85182f9543a099b3b08d270df, type: 3}
   destroyingBush: {fileID: 8300000, guid: 0f0edcec0f3b72542b8aeffee02afaeb, type: 3}
+  puttingSeed: {fileID: 8300000, guid: af070cd871c26d94db010cb73119ead7, type: 3}
   sfxSource: {fileID: 899133844}
   ambienceMusic: {fileID: 732209015}
   musicSource: {fileID: 470339307}
