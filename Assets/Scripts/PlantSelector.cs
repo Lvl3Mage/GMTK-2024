@@ -17,22 +17,6 @@ class PlantSelector : MonoBehaviour
     [Range(0, 1)][SerializeField] float RNGManipulation = 0.5f;
     int currentTax = 0;
 
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            int min = (int)(PlantMinSize - currentTax * RNGManipulation);
-            int max = (int)(PlantMaxSize + 1 - currentTax * RNGManipulation);
-            int plantSize = UnityEngine.Random.Range(min, max);
-            plantSize = Math.Clamp(plantSize, PlantMinSize, PlantMaxSize);
-            currentTax -= AveragePlantSize - plantSize;
-
-            print("Plant Size: " + plantSize.ToString());
-            print("Plant Tax: " + (-1 * (AveragePlantSize - plantSize)).ToString());
-            print("Total Taxes: " + currentTax.ToString());
-        }
-        if (Input.GetKeyDown(KeyCode.R)) currentTax = 0;
-    }
     public IEnumerator SelectPlant()
     {
         while (false)
@@ -51,9 +35,6 @@ class PlantSelector : MonoBehaviour
         int plantSize = UnityEngine.Random.Range(min, max);
         plantSize = Math.Clamp(plantSize, PlantMinSize, PlantMaxSize);
         currentTax -= AveragePlantSize - plantSize;
-
-        print(plantSize);
-        print("Plant Tax: " + currentTax.ToString());
         
         while(plantPositions.Count() >= plantSize)
         {
@@ -81,10 +62,10 @@ class PlantSelector : MonoBehaviour
     {
         Vector2Int[] adjacentPositions = new Vector2Int[]
         {
-            new Vector2Int(cell.x - 1, cell.y), // left
-            new Vector2Int(cell.x + 1, cell.y), // right
-            new Vector2Int(cell.x, cell.y - 1), // up
-            new Vector2Int(cell.x, cell.y + 1)  // down
+            new(cell.x - 1, cell.y), // left
+            new(cell.x + 1, cell.y), // right
+            new(cell.x, cell.y - 1), // up
+            new(cell.x, cell.y + 1)  // down
         };
 
         if (blackList != null)
