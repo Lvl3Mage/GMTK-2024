@@ -33,7 +33,7 @@ public class SoundController : MonoBehaviour
 
         if (instance != null)
         {
-            Debug.LogWarning("Another instance of WorldGrid exists! Destroying this one .");
+            Debug.LogWarning("Another instance of WorldGrid exists! Destroying this one.");
             Destroy(gameObject);
             return;
         }
@@ -50,12 +50,12 @@ public class SoundController : MonoBehaviour
         musicSource.Play();
     }
 
-    // Método para reproducir un sonido de efecto aleatorio
+    // Mï¿½todo para reproducir un sonido de efecto aleatorio
     public void PlayEffectSound()
     {
         if (effectSounds.Length == 0)
         {
-            Debug.LogWarning("El array de sonidos está vacío. No se puede reproducir ningún sonido.");
+            Debug.LogWarning("Cannot play sound. Sound array is empty.");
             return;
         }
 
@@ -78,12 +78,11 @@ public class SoundController : MonoBehaviour
         sfxSource.PlayOneShot(rope);
     }
 
-    // Método genérico para reproducir un sonido aleatorio de cualquier array
     public void PlayRandomSound(AudioClip[] soundArray)
     {
         if (soundArray.Length == 0)
         {
-            Debug.LogWarning("El array de sonidos está vacío. No se puede reproducir ningún sonido.");
+            Debug.LogWarning("Cannot play sound. Sound array is empty.");
             return;
         }
 

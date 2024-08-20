@@ -18,7 +18,17 @@ public class levelLoader : MonoBehaviour
             }
         }
     }
-
+    string targetScene;
+    public void AnimateToScene(string sceneName)
+    {
+        transition.SetTrigger("start");
+    }
+    public void SwitchToTargetScene()
+    {
+        SceneManager.LoadScene(targetScene);
+    }
+    
+    
     public void callForRestart()
     {
         transition.SetTrigger("restart");

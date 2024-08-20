@@ -7,6 +7,10 @@ using UnityEngine;
 
 public class PlantCreator : MonoBehaviour
 {
+	public event Action OnPlantSpawned;
+	public event Action OnPlantCreated;
+	
+	
     [SerializeField] SpriteRenderer previewSpritePrefab;
     [SerializeField] Color previewColor;
     [SerializeField] Color previewErrorColor;
@@ -52,10 +56,12 @@ public class PlantCreator : MonoBehaviour
 	    }
 
 	    yield return null;
+	    OnPlantSpawned?.Invoke();
 	    while (!Input.GetMouseButtonDown(0) || !IsValidRoot(targetRootPosition)){
 		    UpdateRootSelect();
 		    yield return null;
 	    }
+	    OnPlantCreated?.Invoke();
 	    DrawWithPreviewPool(new HashSet<Vector2Int>());
     }
 
@@ -75,7 +81,7 @@ public class PlantCreator : MonoBehaviour
 	void UpdateSpawner()
     {
 	    int currentRotationAmount = rotationAmount;
-	    if (Input.GetKeyDown(KeyCode.LeftShift)){
+	    if (Input.GetKey(KeyCode.LeftShift)){
 			currentRotationAmount += (int)Input.mouseScrollDelta.y;
 	    }
 	    Vector2Int currentSpawnPosition = WorldToGrid(SceneCamera.GetWorldMousePosition());

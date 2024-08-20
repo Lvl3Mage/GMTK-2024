@@ -4,9 +4,16 @@ using System.Collections.Generic;
 using UnityEngine;
 using Lvl3Mage.CameraManagement2D;
 using TMPro;
+using UnityEngine.Serialization;
 
 public class GameManager : MonoBehaviour
 {
+    public event Action OnGrowStart;
+    public event Action OnGrowEnd;
+    public event Action OnLevelComplete;
+    public event Action OnGridExpanded;
+    public event Action OnLevelStart;
+    public event Action OnNewPlant;
     [SerializeField] CameraModuleManager cameraModuleManager;
     [SerializeField] CameraPanModule cameraPanModule;
     [SerializeField] CameraGridController cameraGridController;
@@ -19,11 +26,11 @@ public class GameManager : MonoBehaviour
     [SerializeField] Vector2Int gridExpandAmount;
 
     [SerializeField] MapRenderer map;
-    [SerializeField] TextMeshProUGUI text;
 
-    int level = 5;
-    int scaleLevel = 10;
-    [SerializeField] float minZoom;
+    [SerializeField] TextWriter plantRequirementDisplay;
+    [SerializeField] int[] stagePlantRequirements;
+    [SerializeField] float requirementsPerAddedArea;
+    int stage = 0;
     void Start()
     {
         Bounds bounds = WorldGrid.instance.InitializeBounds(gridSize);
@@ -34,34 +41,55 @@ public class GameManager : MonoBehaviour
         StartCoroutine(map.renderWorldGrid());
     }
 
+    int GetPlantRequirement(int currentStage)
+    {
+        if(currentStage < stagePlantRequirements.Length){
+            return stagePlantRequirements[currentStage];
+        }
+        int lastDefinedRequirement = stagePlantRequirements[stagePlantRequirements.Length - 1];
+        Vector2Int lastDefinedStageSize = CalculateGridSize(stagePlantRequirements.Length - 1);
+        Vector2Int currentStageSize = CalculateGridSize(currentStage);
+        float addedArea = (currentStageSize.x * currentStageSize.y) - (lastDefinedStageSize.x * lastDefinedStageSize.y);
+        return lastDefinedRequirement + (int)(addedArea * requirementsPerAddedArea);
+    }
+    Vector2Int CalculateGridSize(int level)
+    {
+        return gridSize + level * gridExpandAmount;
+    }
     void Update()
     {
-        text.text = (level - plantManager.GetPlantCount() + 1).ToString();
+        plantRequirementDisplay.Set((stage - plantManager.GetPlantCount() + 1));
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            cameraModuleManager.UseUserInput(false);
+        }
+        else{
+            cameraModuleManager.UseUserInput(true);
+            
+        }
     }
 
-    bool LevelComplete(int currentlevel)
+    bool IsStageComplete(int currentStage)
     {
-        if(plantManager.GetPlantCount() > currentlevel)
-        {
-            level = scaleLevel;
-            scaleLevel *= 2;
-            return true;
-        }
-
-        return false;
+        return plantManager.GetPlantCount() >= GetPlantRequirement(currentStage);
     }
 
     IEnumerator RunGame()
     {
         while (true){
             yield return RunLevel();
-            yield return ExpandGrid(gridExpandAmount);
+            stage++;
+            OnLevelComplete?.Invoke();
+            yield return ExpandGrid();
+            OnGridExpanded?.Invoke();
         }
     }
     
     IEnumerator RunLevel()
     {
-        while (!LevelComplete(level)){
+        OnLevelStart?.Invoke();
+        while (!IsStageComplete(stage)){
+            OnNewPlant?.Invoke();
             yield return plantSelector.SelectPlant();
             
             PlantGenerator plantGenerator = plantSelector.GetPlantGenerator();
@@ -70,20 +98,22 @@ public class GameManager : MonoBehaviour
             
             HashSet<Vector2Int> plantPositions = plantCreator.GetPlantPositions();
             Vector2Int rootPosition = plantCreator.GetRootPosition();
+            OnGrowStart?.Invoke();
             yield return plantManager.SpawnPlant(plantPositions, rootPosition);
             yield return plantManager.UpdatePlants();   
+            OnGrowEnd?.Invoke();
         }
         
     }
-    IEnumerator ExpandGrid(Vector2Int amount)
+    IEnumerator ExpandGrid()
     {
         SoundController.instance.PlayGong();
 
         SoundController.instance.PlayRope();
-        gridSize += amount;
-
-
-        Bounds newBounds = WorldGrid.instance.ExpandGridBounds(amount);
+        Vector2Int newGridSize = CalculateGridSize(stage);
+        Vector2Int expandAmount = newGridSize - gridSize;
+        gridSize = newGridSize;
+        Bounds newBounds = WorldGrid.instance.ExpandGridBounds(expandAmount);
         cameraPanModule.SetClamp(cameraGridController.GetCameraClamp(newBounds));
         cameraModuleManager.SwitchToController(1);
         yield return cameraGridController.ExpandTo(newBounds);
