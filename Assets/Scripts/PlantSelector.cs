@@ -11,14 +11,16 @@ using UnityEngine.Tilemaps;
 
 class PlantSelector : MonoBehaviour
 {
-    public int belowSizeOffset = 3;
-    public int aboveSizeOffset = 9;
+    [SerializeField] int belowSizeOffset = 5;
+    [SerializeField] int aboveSizeOffset = 1;
     /// <summary>
     /// The approximate amount of cells the player will have empty before going next stage
     /// </summary>
-    public int sparedCellsMargin = 5;
+    [SerializeField] int sparedCellsMargin = 5;
+    [SerializeField] int minPlantSize = 3;
     [Range(0, 1)][SerializeField] float RNGManipulation = 0.5f;
     [SerializeField] GameManager gameManager;
+    [SerializeField] PlantManager plantManager;
     int targetPlantSize = 6;
     int currentTax = 0;
 
@@ -35,14 +37,13 @@ class PlantSelector : MonoBehaviour
         HashSet<Vector2Int> plantPositions = new() { Vector2Int.zero }; //Origin position by default
         //Calculate average plant size on current stage
         int freeCells = WorldGrid.instance.GetFreeCellAmount();
-        targetPlantSize = (freeCells - sparedCellsMargin) / gameManager.GetCurrentGoal();
-        print("TargetSize: " + targetPlantSize.ToString());
+        targetPlantSize = (freeCells - sparedCellsMargin) / (gameManager.GetCurrentGoal() - plantManager.GetPlantCount());
         //Randomness manipulation
         int min = (int)(targetPlantSize - belowSizeOffset - currentTax * RNGManipulation);
         int max = (int)(targetPlantSize + aboveSizeOffset + 1 - currentTax * RNGManipulation);
-        print(new Vector2Int(min, max));
+
         int plantSize = UnityEngine.Random.Range(min, max);
-        plantSize = Math.Clamp(plantSize, targetPlantSize - belowSizeOffset, targetPlantSize + aboveSizeOffset);
+        plantSize = Math.Clamp(plantSize, minPlantSize, targetPlantSize + aboveSizeOffset);
         currentTax -= targetPlantSize - plantSize;
         
         while(plantPositions.Count < plantSize)
