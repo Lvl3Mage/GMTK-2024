@@ -18,16 +18,6 @@ public class levelLoader : MonoBehaviour
             }
         }
     }
-    string targetScene;
-    public void AnimateToScene(string sceneName)
-    {
-        transition.SetTrigger("start");
-    }
-    public void SwitchToTargetScene()
-    {
-        SceneManager.LoadScene(targetScene);
-    }
-    
     
     public void callForRestart()
     {
@@ -46,7 +36,7 @@ public class levelLoader : MonoBehaviour
 
     public void LoadTutorial()
     {
-        SceneManager.LoadScene("Tutorial");
+        LoadSceneAsync("Tutorial");
     }
 
     public void exit()
@@ -58,20 +48,28 @@ public class levelLoader : MonoBehaviour
     public void LoadRestart()
     {
         string currentSceneName = SceneManager.GetActiveScene().name;
-        SceneManager.LoadScene(currentSceneName);
+        LoadSceneAsync(currentSceneName);
     }
     public void LoadNextLevel()
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
     }
 
     public void LoadCredits()
     {
-        SceneManager.LoadScene("Credits");
+        LoadSceneAsync("Credits");
     }
 
     public void LoadMainMenu()
     {
-        SceneManager.LoadScene("MainMenu");
+        LoadSceneAsync("MainMenu");
+    }
+    public void LoadSceneAsync(string sceneName)
+    {
+        SceneManager.LoadSceneAsync(sceneName);
+    }
+    public void LoadSceneAsync(int sceneIndex)
+    {
+        SceneManager.LoadSceneAsync(sceneIndex);
     }
 }
