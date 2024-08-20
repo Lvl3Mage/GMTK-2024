@@ -116,11 +116,12 @@ public class GameManager : MonoBehaviour
         Vector2Int expandAmount = newGridSize - gridSize;
         gridSize = newGridSize;
         Bounds newBounds = WorldGrid.instance.ExpandGridBounds(expandAmount);
-        cameraPanModule.SetClamp(cameraGridController.GetCameraClamp(newBounds));
+        CameraState finalState = cameraGridController.GetMaxGridState(newBounds);
         cameraModuleManager.SwitchToController(1);
+        cameraPanModule.SetClamp(cameraGridController.GetCameraClamp(newBounds));
+        cameraPanModule.AdaptToState(finalState);
         yield return cameraGridController.ExpandTo(newBounds);
         //Todo camera controller should expand to grid bounds
-        cameraPanModule.AdaptToState(cameraGridController.GetCameraState());
         cameraModuleManager.SwitchToController(0);
         
         

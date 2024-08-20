@@ -14,7 +14,12 @@ public class CameraGridController : CameraController
     [SerializeField] float control1Pos = 0.3333f;
     [SerializeField] float control2Pos = 0.6666f;
     [SerializeField] float expandDuration = 2;
-	
+
+    public CameraState GetMaxGridState(Bounds gridBounds)
+	{
+	    gridBounds = GetCameraBounds(gridBounds);
+	    return CameraState.CoveringBounds(gridBounds, controllerCamera.aspect);
+	}
 	public IEnumerator ExpandTo(Bounds gridBounds)
 	{
 		// Debug.Log($"Expanding grid {gridBounds}");

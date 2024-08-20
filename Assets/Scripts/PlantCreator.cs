@@ -57,7 +57,7 @@ public class PlantCreator : MonoBehaviour
 
 	    yield return null;
 	    OnPlantSpawned?.Invoke();
-	    while (!Input.GetMouseButtonDown(0) || !IsValidRoot(targetRootPosition) || GetCurrentPositions().Contains(targetRootPosition)){
+	    while (!Input.GetMouseButtonDown(0) || !IsValidRoot(targetRootPosition) || !GetCurrentPositions().Contains(targetRootPosition)){
 		    UpdateRootSelect();
 		    yield return null;
 	    }
