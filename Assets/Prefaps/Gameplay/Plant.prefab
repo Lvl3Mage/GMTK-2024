@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   seedPrefab: {fileID: 2795349669845249271, guid: debca47b061c31844899fa73deb0a542, type: 3}
-  seedAnimationDuration: 0.5
+  seedAnimationDuration: 1.5
   seedZPosition: -4
   colorBuffer:
   - {r: 0, g: 0.3679245, b: 0.089106716, a: 1}

@@ -118,8 +118,15 @@ class PlantSelector : MonoBehaviour
                 offsets.Add(offset);
                 // Debug.Log("Added " + offset);
                 Vector2Int[] neighbours = CellUtils.GetTrueCellNeighbours(offset);
+                neighbours.Shuffle();
+                int neighbourCount = Random.Range(1, 3);
+                int addedNeighbours = 0;
                 foreach (Vector2Int neighbour in neighbours){
                     offsetsToCheck.Add(neighbour);
+                    addedNeighbours++;
+                    if (addedNeighbours >= neighbourCount){
+                        break;
+                    }
                 }
             }
         }

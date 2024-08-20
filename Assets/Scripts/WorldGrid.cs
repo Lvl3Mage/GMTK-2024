@@ -66,16 +66,10 @@ public class WorldGrid : MonoBehaviour
 
     void OnDrawGizmos()
     {
-        foreach (var plant in plantLookUp)
+        foreach (var plant in growthLookUp)
         {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere((Vector2)plant.Key, 0.3f);
-        }
-        
-        foreach(var addedCell in addedCells)
-        {
-            Gizmos.color = Color.gray;
-            Gizmos.DrawWireSphere((Vector2)addedCell, 0.1f);
         }
         Gizmos.color = Color.green;
         Gizmos.DrawWireCube(gridBounds.center, gridBounds.size);
