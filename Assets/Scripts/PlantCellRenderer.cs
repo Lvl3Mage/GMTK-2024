@@ -47,12 +47,15 @@ public class PlantCellRenderer : MonoBehaviour
         }
         if (pastTileIndex == 0){
             animator.Play("Spawn");
+            particles.Play();
         }
         else if (tileIndex == 0){
             animator.Play("Destroy");
+            particles.Play();
         }
         else{
             animator.Play("Update");
+            particles.Play();
         }
     }
     /// <summary>Plays the "Shake" animation in the animator. </summary>

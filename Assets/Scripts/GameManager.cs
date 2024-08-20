@@ -66,7 +66,7 @@ public class GameManager : MonoBehaviour
 
         if(stage == finalStage)
         {
-            SceneManager.LoadScene("EndScreen");
+            // SceneManager.LoadScene("EndScreen");
         }
 
         plantRequirementDisplay.Set(currentPlants + "/" + neededPlants);

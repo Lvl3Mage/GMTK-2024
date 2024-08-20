@@ -90,13 +90,34 @@ public class PlantManager : MonoBehaviour
 
     IEnumerator UpdatePlant(Plant plant)
     {
-        HashSet<Vector2Int> plantGrowth = plant.Grow();
+        plant.Grow();
+        HashSet<Vector2Int> plantAdditions = WorldGrid.instance.GetPlantAdditions(); 
         HashSet<Vector2Int> plantRemovals = WorldGrid.instance.GetPlantRemovals();
         WorldGrid.instance.ClearPlantChanges();
         
-        
+        Dictionary<Plant, HashSet<Vector2Int>> plantGroups = new();
+        foreach (Vector2Int addition in plantAdditions){
+            Plant? addedPlant = WorldGrid.instance.GetPlantAt(addition);
+            if (addedPlant == null){
+                Debug.LogWarning("Plant not found at addition position");
+                continue;
+            }
+
+            if (!plantGroups.ContainsKey(addedPlant)){
+                plantGroups[addedPlant] = new HashSet<Vector2Int>();
+            }
+
+            plantGroups[addedPlant].Add(addition);
+        }
+        int i = 0;
+        PlantRenderer.FillGroup[] fillGroups = new PlantRenderer.FillGroup[plantGroups.Count];
+        foreach (KeyValuePair<Plant, HashSet<Vector2Int>> plantGroup in plantGroups){
+            fillGroups[i] = new PlantRenderer.FillGroup(plantGroup.Value, plantGroup.Key.PlantColor);
+            i++;
+        }
         PlantRenderer.instance.RemoveFilledCells(plantRemovals);
-        PlantRenderer.instance.AddFilledCells(plantGrowth, plant.PlantColor);
+        PlantRenderer.instance.AddFilledCells(fillGroups);
+        
 
         if (PlantRenderer.instance.RequiresShake()){
             PlantRenderer.instance.InitiateShake();
