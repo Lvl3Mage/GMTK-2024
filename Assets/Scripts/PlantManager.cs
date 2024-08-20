@@ -8,7 +8,9 @@ using UnityEngine;
 
 public class PlantManager : MonoBehaviour
 {
-
+    public event Action OnPlantDestroyed;
+    public event Action OnPlantCreated;
+    public event Action OnPlantUpdated;
     public static PlantManager instance { get; private set; }
 
     void Awake()

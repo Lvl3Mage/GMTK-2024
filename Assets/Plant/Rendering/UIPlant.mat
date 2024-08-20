@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TileRenderer
+  m_Name: UIPlant
   m_Shader: {fileID: -6465566751694194690, guid: d3639b47ec06b8b449c50a396889fb2a, type: 3}
   m_ValidKeywords: []
   m_InvalidKeywords: []
@@ -49,14 +49,14 @@ Material:
     - _MaskBorderWidth: 0.11
     - _MaskNoiseFrequency: 20
     - _MaskNoiseMagnitude: 0.03
-    - _MaskSize: 1
+    - _MaskSize: 0.44
     - _NoiseMultiplier: 1
     - _QueueControl: 0
     - _QueueOffset: 0
     - _ShapeWarpFrequency: 2.19
     - _ShapeWarpMagnitude: 0.1
     - _ShapeWarpSpeed: 0.15
-    - _TileIndex: 0
+    - _TileIndex: 15.3
     - _VertexTintMagnitude: 0.2
     - _VertexTintPosterizeSteps: 1.61
     m_Colors:
