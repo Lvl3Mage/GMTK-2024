@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Lvl3Mage.CameraManagement2D;
 using TMPro;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
 public class GameManager : MonoBehaviour
