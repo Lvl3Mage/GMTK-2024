@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Tilemaps;
+using UnityEngine.UIElements;
 
 public class MapRenderer : MonoBehaviour
 {
@@ -12,9 +14,16 @@ public class MapRenderer : MonoBehaviour
     readonly Dictionary<Vector2Int, MapCellType> mapData = new();
     readonly HashSet<Vector2Int> newTiles = new(); // Para almacenar las posiciones nuevas
 
-    private void Start()
+    private void Awake()
     {
+        HashSet<Vector2Int> waterCells = WorldGrid.instance.GetWaterCells();
+        foreach (Vector2Int position in waterCells)
+        {
+            mapData.Add(position, MapCellType.Water);
+        }
     }
+
+
 
     public void FillBounds()
     {
@@ -34,7 +43,14 @@ public class MapRenderer : MonoBehaviour
                     continue;
                 }
 
-                MapCellType cellType = waterCells.Contains(coord) ? MapCellType.Water : MapCellType.Land;
+                MapCellType cellType = MapCellType.Land;
+
+                if (Random.value < 0.07f)  // 1% de probabilidad
+                {
+                    cellType = MapCellType.Water;
+                    WorldGrid.instance.AddWaterPosition(coord);
+                }
+
                 mapData.Add(coord, cellType);
                 newTiles.Add(coord);
             }
@@ -51,17 +67,7 @@ public class MapRenderer : MonoBehaviour
             switch (type)
             {
                 case MapCellType.Land:
-                    if (Random.value < 0.01f)  // 1% de probabilidad
-                    {
-                        type = MapCellType.Water;
-                        tileMap.SetTile(position, water);
-                        tileMap.SetAnimationFrame(position, Random.Range(1, water.m_AnimatedSprites.Length + 1));
-                        WorldGrid.instance.AddWaterPosition(pair.Key);
-                    }
-                    else
-                    {
-                        tileMap.SetTile(position, land[Random.Range(0, land.Length)]);
-                    }
+                    tileMap.SetTile(position, land[Random.Range(0, land.Length)]);
                     break;
 
                 case MapCellType.Water:
@@ -106,9 +112,16 @@ public class MapRenderer : MonoBehaviour
     }
     private void OnDrawGizmos()
     {
-        Gizmos.color = Color.red;
         foreach(var pair in mapData)
         {
+            if(pair.Value == MapCellType.Water)
+            {
+                Gizmos.color = Color.blue;
+            }
+            else
+            {
+                Gizmos.color = Color.red;
+            }
             Gizmos.DrawSphere((Vector2)pair.Key, 0.5f);
         }
     }

@@ -44,6 +44,17 @@ public class levelLoader : MonoBehaviour
         transition.SetTrigger("credits");
     }
 
+    public void LoadTutorial()
+    {
+        SceneManager.LoadScene("Tutorial");
+    }
+
+    public void exit()
+    {
+        print("LOL");
+        Application.Quit();
+    }
+
     public void LoadRestart()
     {
         string currentSceneName = SceneManager.GetActiveScene().name;

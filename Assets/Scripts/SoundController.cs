@@ -8,22 +8,32 @@ public class SoundController : MonoBehaviour
     public AudioClip[] ambientSounds;
     public AudioClip[] effectSounds;
     public AudioClip[] musicTracks;
+    public AudioClip[] musicKeys; 
 
     [Header("--------- Audio Clip ---------")]
     public AudioClip background;
+    public AudioClip gamePlayMusic;
     public AudioClip dog;
     public AudioClip gong;
     public AudioClip rope;
 
     [Header("--------- Audio Source ---------")]
     public AudioSource sfxSource;
+    public AudioSource ambienceMusic;
     public AudioSource musicSource;
+
+    int keysIndex = 0;
 
     private void Awake()
     {
         if (sfxSource == null)
         {
             sfxSource = gameObject.AddComponent<AudioSource>();
+        }
+
+        if (ambienceMusic == null)
+        {
+            ambienceMusic = gameObject.AddComponent<AudioSource>();
         }
 
         if (musicSource == null)
@@ -45,9 +55,9 @@ public class SoundController : MonoBehaviour
 
     private void Start()
     {
-        musicSource.clip = background;
-        musicSource.loop = true;
-        musicSource.Play();
+        ambienceMusic.clip = background;
+        ambienceMusic.loop = true;
+        ambienceMusic.Play();
     }
 
     // M�todo para reproducir un sonido de efecto aleatorio
@@ -61,6 +71,28 @@ public class SoundController : MonoBehaviour
 
         int randomIndex = Random.Range(0, effectSounds.Length);
         sfxSource.PlayOneShot(effectSounds[randomIndex]);
+    }
+
+    public void PlayMusicKeys()
+    {
+        if (musicKeys.Length == 0)
+        {
+            Debug.LogWarning("Cannot play sound. Sound array is empty.");
+            return;
+        }
+
+        sfxSource.PlayOneShot(musicKeys[keysIndex++]);
+        if(keysIndex >= musicKeys.Length)
+        {
+            keysIndex = 0;
+        }
+    }
+
+    public void PlayGameplayMusic()
+    {
+        musicSource.clip = gamePlayMusic;
+        musicSource.loop = true;
+        musicSource.Play();
     }
 
     public void PlayDog()
