@@ -12,7 +12,7 @@ public class PlantCellRenderer : MonoBehaviour
     Color[] quadrantColors = new Color[4];
     [SerializeField] float shakeDuration = 1f;
 
-    [SerializeField] [ParentActionButton("Apply Changes", nameof(UpdateSprite))]
+    [SerializeField] [ParentActionButton("Apply Changes", nameof(UpdateSprite), hideField:true)]
     string btn;
 
     void Awake()

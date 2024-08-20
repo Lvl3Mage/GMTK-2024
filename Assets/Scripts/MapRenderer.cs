@@ -22,9 +22,7 @@ public class MapRenderer : MonoBehaviour
         HashSet<Vector2Int> waterCells = WorldGrid.instance.GetWaterCells();
         Vector2Int origin = gridSize / 2;
 
-        newTiles.Clear(); // Limpiar la lista de nuevos tiles
-
-        // Iterar sobre cada posición en la cuadrícula
+        newTiles.Clear();
         for (int row = -origin.y; row <= gridSize.y / 2; row++)
         {
             for (int col = -origin.x; col <= gridSize.x / 2; col++)
@@ -38,7 +36,7 @@ public class MapRenderer : MonoBehaviour
 
                 MapCellType cellType = waterCells.Contains(coord) ? MapCellType.Water : MapCellType.Land;
                 mapData.Add(coord, cellType);
-                newTiles.Add(coord); // Añadir la posición a los nuevos tiles
+                newTiles.Add(coord);
             }
         }
     }
@@ -58,7 +56,7 @@ public class MapRenderer : MonoBehaviour
                         type = MapCellType.Water;
                         tileMap.SetTile(position, water);
                         tileMap.SetAnimationFrame(position, Random.Range(1, water.m_AnimatedSprites.Length + 1));
-                        WorldGrid.instance.waterPositions.Add(pair.Key); // Añadir la posición a waterPositions
+                        WorldGrid.instance.AddWaterPosition(pair.Key);
                     }
                     else
                     {
@@ -82,7 +80,6 @@ public class MapRenderer : MonoBehaviour
             }
         }
 
-        // Animación de 0 -> 1 (escala) solo para los nuevos tiles
 
         float elapsedTime = 0f;
         while (elapsedTime < animationDuration)
@@ -99,7 +96,6 @@ public class MapRenderer : MonoBehaviour
             yield return null; 
         }
 
-        // Resetear la escala al final de la animación
         foreach (Vector2Int coord in newTiles)
         {
             Vector3Int position = new Vector3Int(coord.x, coord.y, 0);

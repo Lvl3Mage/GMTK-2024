@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1444810799913484735}
   - component: {fileID: 3403444021964163784}
   - component: {fileID: 499521911}
+  - component: {fileID: 357801568613418007}
   m_Layer: 6
   m_Name: ParticleRain
   m_TagString: Untagged
@@ -2723,9 +2724,9 @@ ParticleSystem:
     enabled: 1
     strength:
       serializedVersion: 2
-      minMaxState: 3
-      scalar: 0.12
-      minScalar: 0.01
+      minMaxState: 0
+      scalar: 0.1
+      minScalar: 0.2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -2776,7 +2777,7 @@ ParticleSystem:
         m_RotationOrder: 4
     strengthY:
       serializedVersion: 2
-      minMaxState: 3
+      minMaxState: 0
       scalar: 1
       minScalar: 1
       maxCurve:
@@ -2829,7 +2830,7 @@ ParticleSystem:
         m_RotationOrder: 4
     strengthZ:
       serializedVersion: 2
-      minMaxState: 3
+      minMaxState: 0
       scalar: 1
       minScalar: 1
       maxCurve:
@@ -2881,7 +2882,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     separateAxes: 0
-    frequency: 2
+    frequency: 0.6
     damping: 1
     octaves: 1
     octaveMultiplier: 0.5
@@ -2890,7 +2891,7 @@ ParticleSystem:
     scrollSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 0
+      scalar: 0.11
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -3423,10 +3424,10 @@ ParticleSystem:
     range: {x: 0, y: 1}
     separateAxes: 0
   RotationBySpeedModule:
-    enabled: 0
+    enabled: 1
     x:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -3479,7 +3480,7 @@ ParticleSystem:
         m_RotationOrder: 4
     y:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0
       minScalar: 0
       maxCurve:
@@ -3532,9 +3533,9 @@ ParticleSystem:
         m_RotationOrder: 4
     curve:
       serializedVersion: 2
-      minMaxState: 0
+      minMaxState: 3
       scalar: 0.7853982
-      minScalar: 0.7853982
+      minScalar: -0.7853981
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -4864,3 +4865,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c667ad2997e6084e8567365bbdbe53d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &357801568613418007
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3424180504925880611}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: af67bb44b1af3754e8e6b12b3e7ec39d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  uniqueObjectName: LeafRain

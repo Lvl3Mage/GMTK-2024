@@ -1,23 +1,40 @@
 ﻿#nullable enable
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Plant : MonoBehaviour
 {
-	[SerializeField] Color plantColor;
+	Color plantColor;
 	public Color PlantColor => plantColor;
 	readonly HashSet<Vector2Int> growthPositions = new();
 	readonly HashSet<Vector2Int> plantPositions = new();
 	Vector2Int rootPosition;
 	bool plantDestroyed = false;
-	public void Create(HashSet<Vector2Int> positions, Vector2Int root)
+	[SerializeField] GameObject seedPrefab;
+	[SerializeField] float seedAnimationDuration;
+	[SerializeField] float seedZPosition;
+	[SerializeField] Color[] colorBuffer;
+	
+	static int colorBufferIndex = 0;
+	public IEnumerator Create(HashSet<Vector2Int> positions, Vector2Int root)
 	{
+		colorBufferIndex++;
+		if (colorBufferIndex >= colorBuffer.Length){
+			colorBufferIndex = 0;
+		}
+		plantColor = colorBuffer[colorBufferIndex];
 		growthPositions.UnionWith(positions);
 		WorldGrid.instance.AddGrowthPositions(growthPositions.ToArray());
 		rootPosition = root;
+		Vector3 position = new Vector3(rootPosition.x, rootPosition.y,seedZPosition);
+		GameObject seedObj = Instantiate(seedPrefab, position, Quaternion.identity);
+		yield return new WaitForSeconds(seedAnimationDuration);
+		Destroy(seedObj);
 	}
 
 	public HashSet<Vector2Int> Grow()
@@ -31,7 +48,7 @@ public class Plant : MonoBehaviour
 		growthTargets.ExceptWith(plantPositions);
 		growthTargets.IntersectWith(growthPositions);
 
-		CleanGrowthTargets(growthTargets);
+		VerifyGrowthTargets(growthTargets);
 		//Plant can destroy itself while growing
 		if (plantDestroyed){
 			return new HashSet<Vector2Int>();
@@ -44,13 +61,14 @@ public class Plant : MonoBehaviour
 		return growthTargets;
 	}
 
-	void CleanGrowthTargets(HashSet<Vector2Int> growthTargets)
+	void VerifyGrowthTargets(HashSet<Vector2Int> growthTargets)
 	{
 		foreach (Vector2Int growthTarget in growthTargets){
 			Plant? otherPlant = WorldGrid.instance.GetPlantAt(growthTarget);
 			if(otherPlant != null && otherPlant != this){
 				Debug.Log($"Destroying at {growthTarget}");
 				PlantManager.instance.DestroyPlant(otherPlant);
+				PlantManager.instance.DestroyPlant(this);
 			}
 		}
 	}

@@ -36,14 +36,14 @@ class PlantSelector : MonoBehaviour
         plantSize = Math.Clamp(plantSize, PlantMinSize, PlantMaxSize);
         currentTax -= AveragePlantSize - plantSize;
         
-        while(plantPositions.Count() >= plantSize)
+        while(plantPositions.Count < plantSize)
         {
             Vector2Int seed = plantPositions.ElementAt(UnityEngine.Random.Range(0, plantPositions.Count));
             Vector2Int newTile = GetRandAdjacent(seed, plantPositions);
             plantPositions.Add(newTile);
         }
 
-        return (Vector2Int position) => LocalToGlobal(plantPositions, position);
+        return position => LocalToGlobal(plantPositions, position);
     }
 
     public PlantGenerator GetPlantGenerator() => CreatePlantShape();

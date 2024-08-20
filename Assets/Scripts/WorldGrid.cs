@@ -46,7 +46,12 @@ public class WorldGrid : MonoBehaviour
     }
     readonly Dictionary<Vector2Int, Plant> plantLookUp = new();
     readonly Dictionary<Vector2Int, int> growthLookUp = new();
-    public HashSet<Vector2Int> waterPositions = new();
+    HashSet<Vector2Int> waterPositions = new();
+
+    public void AddWaterPosition(Vector2Int pos)
+    {
+        waterPositions.Add(pos);
+    }
 
     [SerializeField] Vector2Int[] initialWaterPosition;
 
@@ -95,10 +100,8 @@ public class WorldGrid : MonoBehaviour
         }
         instance = this;
 
-        foreach(Vector2Int pos in initialWaterPosition)
-        {
-            waterPositions.Add(pos);
-        }
+        waterPositions.UnionWith(initialWaterPosition);
+        Debug.Log(waterPositions.Count);
     }
 
     public void RegisterPlant(Vector2Int position, Plant plant)
@@ -119,12 +122,14 @@ public class WorldGrid : MonoBehaviour
     {
         HashSet<Plant> waterPlants = new HashSet<Plant>();
         
-        foreach(Vector2Int waterPosition in waterPositions)
-        {
-            Plant? plant = GetPlantAt(waterPosition);
-            if(plant != null)
-            {
-                waterPlants.Add(plant);
+        foreach(Vector2Int waterPosition in waterPositions){
+            Vector2Int[] neighbours = CellUtils.GetTrueCellNeighbours(waterPosition);
+            foreach (Vector2Int neighbour in neighbours){
+                Plant? plant = GetPlantAt(neighbour);
+                if(plant != null)
+                {
+                    waterPlants.Add(plant);
+                }
             }
         }
 

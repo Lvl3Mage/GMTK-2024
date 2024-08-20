@@ -594,9 +594,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   active: 0
-  interpolatePosition: 0
+  interpolatePosition: 1
   panSpeed: 20
-  interpolateZoom: 0
+  interpolateZoom: 1
   zoomSpeed: 20
   interpolateRotation: 0
   rotationSpeed: 20
@@ -1864,6 +1864,8 @@ MonoBehaviour:
   previewColor: {r: 1, g: 1, b: 1, a: 0.50980395}
   previewErrorColor: {r: 1, g: 0, b: 0, a: 0.50980395}
   previewOccupiedColor: {r: 0.97662073, g: 1, b: 0.4292453, a: 0.50980395}
+  previewHiddenColor: {r: 1, g: 1, b: 1, a: 0.11764706}
+  previewHoverColor: {r: 1, g: 1, b: 1, a: 0.7058824}
 --- !u!4 &2025994125
 Transform:
   m_ObjectHideFlags: 0

@@ -34,7 +34,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(map.renderWorldGrid());
     }
 
-    private void Update()
+    void Update()
     {
         text.text = (level - plantManager.GetPlantCount() + 1).ToString();
     }
@@ -70,7 +70,7 @@ public class GameManager : MonoBehaviour
             
             HashSet<Vector2Int> plantPositions = plantCreator.GetPlantPositions();
             Vector2Int rootPosition = plantCreator.GetRootPosition();
-            plantManager.SpawnPlant(plantPositions, rootPosition);
+            yield return plantManager.SpawnPlant(plantPositions, rootPosition);
             yield return plantManager.UpdatePlants();   
         }
         

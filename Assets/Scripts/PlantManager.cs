@@ -33,13 +33,14 @@ public class PlantManager : MonoBehaviour
     /// </summary>
     /// <param name="positions">the coordinates where it will be created</param>
     /// <param name="rootPosition">the coordinates of the first Plant</param>
-    public void SpawnPlant(HashSet<Vector2Int> positions, Vector2Int rootPosition)
+    public IEnumerator SpawnPlant(HashSet<Vector2Int> positions, Vector2Int rootPosition)
     {
         Vector3 position = (Vector2)rootPosition;
         position.z = transform.position.z;
         Plant newPlant = Instantiate(plantPrefab, position, Quaternion.identity);
-        newPlant.Create(positions, rootPosition);
+        yield return newPlant.Create(positions, rootPosition);
         managedPlants.Add(newPlant);
+        yield return UpdatePlant(newPlant);
     }
     void DestroyDisconnectedPlants()
     {
@@ -55,6 +56,8 @@ public class PlantManager : MonoBehaviour
 
     static HashSet<Plant> PlantDFS(HashSet<Plant> sourcePlants)
     {
+        
+        Debug.Log($"InitialPlants: {sourcePlants.Count}");
         HashSet<Plant> connectedPlants = new(sourcePlants);
         Queue<Plant> plantQueue = new Queue<Plant>(connectedPlants);
         

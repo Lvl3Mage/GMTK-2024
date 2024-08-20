@@ -539,29 +539,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 529a18db1b74627459799826b121f372, type: 3}
---- !u!1 &563591712 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3424180504925880611, guid: 529a18db1b74627459799826b121f372, type: 3}
-  m_PrefabInstance: {fileID: 563591711}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &563591713
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 563591712}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5fad003655e4e145bd49c2368f5af30, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  particles: {fileID: 563591716}
---- !u!198 &563591716 stripped
-ParticleSystem:
-  m_CorrespondingSourceObject: {fileID: 1444810799913484735, guid: 529a18db1b74627459799826b121f372, type: 3}
-  m_PrefabInstance: {fileID: 563591711}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &852897777
 GameObject:
   m_ObjectHideFlags: 0

@@ -11,51 +11,144 @@ public class PlantCreator : MonoBehaviour
     [SerializeField] Color previewColor;
     [SerializeField] Color previewErrorColor;
     [SerializeField] Color previewOccupiedColor;
+    [SerializeField] Color previewHiddenColor;
+    [SerializeField] Color previewHoverColor;
     PlantGenerator plantGenerator = (position) => {
 	    HashSet<Vector2Int> points = new HashSet<Vector2Int>();
 	    points.Add(position);
 	    return points;
     };
 
+    int rotationAmount = 0;
 
+	Vector2Int targetSpawnPosition;
 	Vector2Int targetRootPosition;
-	
 
+	bool IsValidRoot(Vector2Int rootPosition)
+	{
+		if (WorldGrid.instance.GetPlantAt(rootPosition) != null){
+			return false;
+		}
+		Vector2Int[] neighbours = CellUtils.GetTrueCellNeighbours(rootPosition);
+		foreach (Vector2Int neighbour in neighbours){
+			if (WorldGrid.instance.GetPlantAt(neighbour) != null){
+				return true;
+			}
+			if(WorldGrid.instance.GetMapTypeAt(neighbour) == MapCellType.Water){
+				return true;
+			}
+		}
+
+		return false;
+	}
     public IEnumerator CreatePlant(PlantGenerator generator)
     {
+	    rotationAmount = 0;
 	    plantGenerator = generator;
-	    while(!Input.GetMouseButtonDown(0) || !CanCreatePlant(targetRootPosition))
+	    while(!Input.GetMouseButtonDown(0) || !CurrentSpawnValid(GetCurrentPositions()))
 	    {
-		    UpdateCreator();
+		    UpdateSpawner();
+		    yield return null;
+	    }
+
+	    yield return null;
+	    while (!Input.GetMouseButtonDown(0) || !IsValidRoot(targetRootPosition)){
+		    UpdateRootSelect();
 		    yield return null;
 	    }
 	    DrawWithPreviewPool(new HashSet<Vector2Int>());
     }
-    bool CanCreatePlant(Vector2Int rootPosition)
-	{
-		HashSet<Vector2Int> plantPositions = plantGenerator(rootPosition);
+
+    bool ValidRootExists(HashSet<Vector2Int> plantPositions)
+    {
+	    return plantPositions.Any(IsValidRoot);
+    }
+    bool CurrentSpawnValid(HashSet<Vector2Int> plantPositions)
+    {
 		foreach (Vector2Int plantPosition in plantPositions){
 			if (!WorldGrid.instance.CellTargetable(plantPosition)){
 				return false;
 			}
 		}
-	    return WorldGrid.instance.CellTargetable(rootPosition) && WorldGrid.instance.GetPlantAt(rootPosition) == null;
-	}
-	void UpdateCreator()
+	    return ValidRootExists(plantPositions);
+    }
+	void UpdateSpawner()
     {
-	    Vector2Int currentRootPosition = WorldToGrid(SceneCamera.GetWorldMousePosition());
-	    if(currentRootPosition == targetRootPosition)
+	    int currentRotationAmount = rotationAmount + (int)Input.mouseScrollDelta.y;
+	    Vector2Int currentSpawnPosition = WorldToGrid(SceneCamera.GetWorldMousePosition());
+	    if(currentSpawnPosition == targetSpawnPosition && currentRotationAmount == rotationAmount)
 	    {
 		    return;
 	    }
-	    targetRootPosition = currentRootPosition;
-	    DrawWithPreviewPool(plantGenerator(targetRootPosition));
+	    targetSpawnPosition = currentSpawnPosition;
+	    rotationAmount = currentRotationAmount;
+	    
+	    HashSet<Vector2Int> plantPositions = GetCurrentPositions();
+	    bool validRootExists = ValidRootExists(plantPositions);
+	    DrawWithPreviewPool(plantPositions, (pos) => {
+		    if (!validRootExists){
+			    return previewErrorColor;
+		    }
+			bool targetable = WorldGrid.instance.CellTargetable(pos);
+			bool occupied = WorldGrid.instance.GetPlantAt(pos) != null;
+			if (occupied)
+			{
+				return previewOccupiedColor;
+			}
+			return targetable ? previewColor : previewErrorColor;
+		});
     }
+
+	void UpdateRootSelect()
+	{
+		Vector2Int currentRootPosition = WorldToGrid(SceneCamera.GetWorldMousePosition());
+		if(currentRootPosition == targetRootPosition)
+		{
+			return;
+		}
+		targetRootPosition = currentRootPosition;
+		HashSet<Vector2Int> plantPositions = GetCurrentPositions();
+		DrawWithPreviewPool(plantPositions, (pos) => {
+			if (!IsValidRoot(pos)){
+				return previewHiddenColor;
+			}
+			if(pos == targetRootPosition)
+			{
+				return previewHoverColor;
+			}
+			return previewColor;
+		});
+	}
+	
     Vector2Int WorldToGrid(Vector2 worldPosition)
     {
         return new Vector2Int(Mathf.RoundToInt(worldPosition.x), Mathf.RoundToInt(worldPosition.y));
     }
 
+    HashSet<Vector2Int> GetCurrentPositions()
+    {
+	    HashSet<Vector2Int> plantPositions = plantGenerator(targetSpawnPosition);
+	    int rotation = rotationAmount % 4;
+	    if(rotation < 0)
+	    {
+		    rotation += 4;
+	    }
+	    for (int i = 0; i < rotation; i++){
+		    plantPositions = RotateAround(targetSpawnPosition, plantPositions);
+	    }
+		plantPositions.Add(targetSpawnPosition);
+		return plantPositions;
+    }
+    HashSet<Vector2Int> RotateAround(Vector2Int root, HashSet<Vector2Int> positions)
+    {
+	    HashSet<Vector2Int> rotated = new HashSet<Vector2Int>();
+	    foreach (Vector2Int position in positions){
+		    Vector2Int offset = position - root;
+		    rotated.Add(new Vector2Int(offset.y, -offset.x) + root);
+	    }
+
+	    return rotated;
+    }
 	List<SpriteRenderer> previewPool = new();
 	void DrawWithPreviewPool(HashSet<Vector2Int> positions, Func<Vector2Int,Color> getColor = null)
 	{
@@ -66,13 +159,7 @@ public class PlantCreator : MonoBehaviour
 		if(getColor == null)
 		{
 			getColor = (pos) => {
-				bool targetable = WorldGrid.instance.CellTargetable(pos);
-				bool occupied = WorldGrid.instance.GetPlantAt(pos) != null;
-				if (occupied)
-				{
-					return previewOccupiedColor;
-				}
-				return targetable ? previewColor : previewErrorColor;
+				return previewColor;
 			};
 		}
 		int previewIndex = 0;
@@ -103,9 +190,7 @@ public class PlantCreator : MonoBehaviour
 
 	public HashSet<Vector2Int> GetPlantPositions()
 	{
-		HashSet<Vector2Int> plantPositions = plantGenerator(targetRootPosition);
-		plantPositions.Add(targetRootPosition);
-		return plantPositions;
+		return GetCurrentPositions();
 	}
 
 	public Vector2Int GetRootPosition()
