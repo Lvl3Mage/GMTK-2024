@@ -1798,7 +1798,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b66f7234ffcfe584ba16df34cbd07ca6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  previewSpritePrefab: {fileID: 1158417086172425045, guid: f52c86663614eb94b9a528ec5412a4a5, type: 3}
+  previewSpritePrefab: {fileID: 3811919115199487518, guid: f52c86663614eb94b9a528ec5412a4a5, type: 3}
   previewColor: {r: 1, g: 1, b: 1, a: 0.50980395}
   previewErrorColor: {r: 1, g: 0, b: 0, a: 0.50980395}
   previewOccupiedColor: {r: 0.97662073, g: 1, b: 0.4292453, a: 0.50980395}
