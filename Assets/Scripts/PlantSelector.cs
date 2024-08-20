@@ -43,8 +43,9 @@ class PlantSelector : MonoBehaviour
         int max = (int)(targetPlantSize + aboveSizeOffset + 1 - currentTax * RNGManipulation);
 
         int plantSize = UnityEngine.Random.Range(min, max);
-        plantSize = Math.Clamp(plantSize, minPlantSize, targetPlantSize + aboveSizeOffset);
+        plantSize = Math.Clamp(plantSize, minPlantSize, Math.Max(minPlantSize, targetPlantSize + aboveSizeOffset));
         currentTax -= targetPlantSize - plantSize;
+        print(plantSize);
         
         while(plantPositions.Count < plantSize)
         {

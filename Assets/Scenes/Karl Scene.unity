@@ -1850,7 +1850,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   belowSizeOffset: 4
   aboveSizeOffset: 1
-  sparedCellsMargin: 5
+  sparedCellsMargin: 20
+  minPlantSize: 3
   RNGManipulation: 1
   gameManager: {fileID: 1327722751}
   plantManager: {fileID: 1668031027}
