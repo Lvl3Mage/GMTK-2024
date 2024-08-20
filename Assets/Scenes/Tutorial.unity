@@ -775,7 +775,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   active: 0
-  cameraBoundsPadding: 5
+  cameraBoundsPadding: 4
   control1Pos: 0
   control2Pos: 1
   expandDuration: 2
@@ -1084,7 +1084,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   initialWaterPosition:
-  - {x: 0, y: 0}
+  - {x: -2, y: 0}
+  - {x: 2, y: 0}
 --- !u!4 &1054991283
 Transform:
   m_ObjectHideFlags: 0
@@ -1583,7 +1584,7 @@ MonoBehaviour:
   plantManager: {fileID: 1668031027}
   plantCreator: {fileID: 2025994124}
   plantSelector: {fileID: 2046656693}
-  gridSize: {x: 5, y: 2}
+  gridSize: {x: 2, y: 2}
   gridExpandAmount: {x: 4, y: 2}
   map: {fileID: 1671643597}
   plantRequirementDisplay: {fileID: 1711380128}
