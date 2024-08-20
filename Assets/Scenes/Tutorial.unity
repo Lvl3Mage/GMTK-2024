@@ -775,7 +775,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   active: 0
-  cameraBoundsPadding: 4
+  cameraBoundsPadding: 2
   control1Pos: 0
   control2Pos: 1
   expandDuration: 2
@@ -2320,6 +2320,7 @@ MonoBehaviour:
   aboveSizeOffset: 1
   sparedCellsMargin: 5
   minPlantSize: 3
+  maxSize: 4
   RNGManipulation: 0.5
 --- !u!4 &2046656694
 Transform:

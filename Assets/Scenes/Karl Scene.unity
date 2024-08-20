@@ -628,7 +628,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   active: 0
-  cameraBoundsPadding: 1
+  cameraBoundsPadding: 2
   control1Pos: 0
   control2Pos: 1
   expandDuration: 2
@@ -1853,9 +1853,8 @@ MonoBehaviour:
   aboveSizeOffset: 1
   sparedCellsMargin: 20
   minPlantSize: 3
+  maxSize: 0
   RNGManipulation: 1
-  gameManager: {fileID: 1327722751}
-  plantManager: {fileID: 1668031027}
 --- !u!4 &2046656694
 Transform:
   m_ObjectHideFlags: 0

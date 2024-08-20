@@ -19,6 +19,7 @@ class PlantSelector : MonoBehaviour
     /// </summary>
     [SerializeField] int sparedCellsMargin = 5;
     [SerializeField] int minPlantSize = 3;
+    [SerializeField] int maxSize;
     [Range(0, 1)][SerializeField] float RNGManipulation = 0.5f;
     int targetPlantSize = 6;
     int currentTax = 0;
@@ -43,7 +44,10 @@ class PlantSelector : MonoBehaviour
         int plantSize = UnityEngine.Random.Range(min, max);
         plantSize = Math.Clamp(plantSize, minPlantSize, Math.Max(minPlantSize, targetPlantSize + aboveSizeOffset));
         currentTax -= targetPlantSize - plantSize;
-        
+
+        if (maxSize > 0){
+            plantSize = Mathf.Min(plantSize, maxSize);
+        }
         HashSet<Vector2Int> plantPositions = GenerateShapeWithSize(plantSize);
         // while(plantPositions.Count < plantSize)
         // {
