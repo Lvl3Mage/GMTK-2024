@@ -26,6 +26,15 @@ public class WorldGrid : MonoBehaviour
         return gridBounds;
     }
     
+    /// <summary>
+    /// Check whether the cell supports plant growth
+    /// </summary>
+    /// <param name="position">
+    /// The cell to check
+    /// </param>
+    /// <returns>
+    /// True if the cell supports plant growth. Otherwise false
+    /// </returns>
     public bool CellTargetable(Vector2Int position)
     {
         MapCellType cellType = GetMapTypeAt(position);
@@ -145,13 +154,26 @@ public class WorldGrid : MonoBehaviour
         removedCells.Clear();
     }
 
-
+    /// <summary>
+    /// Check the growth at a specific cell
+    /// </summary>
+    /// <param name="position">
+    /// The cell to check
+    /// </param>
+    /// <returns>
+    /// Returns whether any plants have targeted a cell for growth
+    /// </returns>
     public bool GetGrowthAt(Vector2Int position)
     {
         return !plantLookUp.ContainsKey(position);
     }
 
-    // Growth Lookup
+    /// <summary>
+    /// Add growth targeted positions
+    /// </summary>
+    /// <param name="positions">
+    /// The positions to add
+    /// </param>
 
     public void AddGrowthPositions(Vector2Int[] positions)
     {   
@@ -165,7 +187,12 @@ public class WorldGrid : MonoBehaviour
             growthLookUp[position]++;
         }
     }
-
+    /// <summary>
+    /// Remove growth targeted positions
+    /// </summary>
+    /// <param name="positions">
+    /// The positions to remove
+    /// </param>
     public void RemoveGrowthPositions(Vector2Int[] positions)
     {
         foreach (var position in positions)

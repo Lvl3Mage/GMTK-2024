@@ -1,12 +1,38 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using MyBox;
+using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.PlayerLoop;
+using UnityEngine.Tilemaps;
 
 class PlantSelector : MonoBehaviour
 {
-    [SerializeField] Vector2Int[] plantGeneratorOffsets;
-    int a;
+    public int AveragePlantSize = 6;
+    public int PlantMinSize = 3;
+    public int PlantMaxSize = 9;
+    [Range(0, 1)][SerializeField] float RNGManipulation = 0.5f;
+    int currentTax = 0;
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            int min = (int)(PlantMinSize - currentTax * RNGManipulation);
+            int max = (int)(PlantMaxSize + 1 - currentTax * RNGManipulation);
+            int plantSize = UnityEngine.Random.Range(min, max);
+            plantSize = Math.Clamp(plantSize, PlantMinSize, PlantMaxSize);
+            currentTax -= AveragePlantSize - plantSize;
+
+            print("Plant Size: " + plantSize.ToString());
+            print("Plant Tax: " + (-1 * (AveragePlantSize - plantSize)).ToString());
+            print("Total Taxes: " + currentTax.ToString());
+        }
+        if (Input.GetKeyDown(KeyCode.R)) currentTax = 0;
+    }
     public IEnumerator SelectPlant()
     {
         while (false)
@@ -15,17 +41,59 @@ class PlantSelector : MonoBehaviour
         }
     }
 
-    HashSet<Vector2Int> GeneratePositions(Vector2Int position)
+    PlantGenerator CreatePlantShape()
     {
-         HashSet<Vector2Int> plantPositions = new();
-        foreach (Vector2Int offset in plantGeneratorOffsets){
-            plantPositions.Add(position + offset);
+        HashSet<Vector2Int> plantPositions = new() { Vector2Int.zero }; //Origin position by default
+
+        //Randomness manipulation
+        int min = (int)(PlantMinSize - currentTax * RNGManipulation);
+        int max = (int)(PlantMaxSize + 1 - currentTax * RNGManipulation);
+        int plantSize = UnityEngine.Random.Range(min, max);
+        plantSize = Math.Clamp(plantSize, PlantMinSize, PlantMaxSize);
+        currentTax -= AveragePlantSize - plantSize;
+
+        print(plantSize);
+        print("Plant Tax: " + currentTax.ToString());
+        
+        while(plantPositions.Count() >= plantSize)
+        {
+            Vector2Int seed = plantPositions.ElementAt(UnityEngine.Random.Range(0, plantPositions.Count));
+            Vector2Int newTile = GetRandAdjacent(seed, plantPositions);
+            plantPositions.Add(newTile);
         }
-        return plantPositions;
+
+        return (Vector2Int position) => LocalToGlobal(plantPositions, position);
     }
-    public PlantGenerator GetPlantGenerator()
+
+    public PlantGenerator GetPlantGenerator() => CreatePlantShape();
+
+    private HashSet<Vector2Int> LocalToGlobal(HashSet<Vector2Int> localPositions, Vector2Int globalPosition)
     {
-        return GeneratePositions;
+        HashSet<Vector2Int> globalPositions = new();
+
+        foreach (Vector2Int position in localPositions)
+            globalPositions.Add(position + globalPosition);
+
+        return globalPositions;
+    }
+
+    private Vector2Int GetRandAdjacent(Vector2Int cell, HashSet<Vector2Int> blackList = null)
+    {
+        Vector2Int[] adjacentPositions = new Vector2Int[]
+        {
+            new Vector2Int(cell.x - 1, cell.y), // left
+            new Vector2Int(cell.x + 1, cell.y), // right
+            new Vector2Int(cell.x, cell.y - 1), // up
+            new Vector2Int(cell.x, cell.y + 1)  // down
+        };
+
+        if (blackList != null)
+            adjacentPositions = adjacentPositions.Where(pos => !blackList.Contains(pos)).ToArray();
+
+        if (adjacentPositions.Length == 0)
+            return cell; //If all positions are blacklisted, then return origin position
+
+        return adjacentPositions[UnityEngine.Random.Range(0, adjacentPositions.Length)];
     }
 }
 

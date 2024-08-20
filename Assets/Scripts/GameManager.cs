@@ -27,7 +27,7 @@ public class GameManager : MonoBehaviour
 
     bool LevelComplete(int level)
     {
-        return plantManager.GetPlantCount() > level;
+        return plantManager.GetPlantCount() > 100000;
     }
 
     IEnumerator RunGame()
