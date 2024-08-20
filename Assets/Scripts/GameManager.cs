@@ -47,10 +47,8 @@ public class GameManager : MonoBehaviour
             scaleLevel *= 2;
             return true;
         }
-        else
-        {
-            return false;
-        }
+
+        return false;
     }
 
     IEnumerator RunGame()
@@ -98,9 +96,6 @@ public class GameManager : MonoBehaviour
         StartCoroutine(map.renderWorldGrid());
 
     }
-
-
-
     public static GameManager instance { get; private set; }
     public void Awake()
     {
