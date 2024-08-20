@@ -1171,6 +1171,7 @@ MonoBehaviour:
   plantRequirementDisplay: {fileID: 1711380128}
   stagePlantRequirements: 050000000a0000000f000000
   requirementsPerAddedArea: 0
+  finalStage: 3
 --- !u!4 &1327722752
 Transform:
   m_ObjectHideFlags: 0

@@ -5,6 +5,7 @@ using UnityEngine;
 using Lvl3Mage.CameraManagement2D;
 using TMPro;
 using UnityEngine.Serialization;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -30,7 +31,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] TextWriter plantRequirementDisplay;
     [SerializeField] int[] stagePlantRequirements;
     [SerializeField] float requirementsPerAddedArea;
+
     int stage = 0;
+    [SerializeField] int finalStage;
     void Start()
     {
         Bounds bounds = WorldGrid.instance.InitializeBounds(gridSize);
@@ -61,6 +64,11 @@ public class GameManager : MonoBehaviour
 
         string currentPlants = plantManager.GetPlantCount().ToString();
         string neededPlants = GetPlantRequirement(stage).ToString();
+
+        if(stage == finalStage)
+        {
+            SceneManager.LoadScene("EndScreen");
+        }
 
         plantRequirementDisplay.Set(currentPlants + "/" + neededPlants);
         if (Input.GetKey(KeyCode.LeftShift))
